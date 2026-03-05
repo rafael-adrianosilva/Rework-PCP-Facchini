@@ -1,0 +1,34 @@
+.navbar {
+    width: 100%;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: var(--corFundo2);
+    box-shadow: var(--sombra);
+    padding: 10px 30px;
+    border-bottom: 1px solid var(--corBordas);
+    box-shadow: var(--sombra);
+}
+
+.navbar-img img {
+    width: 75%;
+}
+
+#tema {
+    font-size: var(--text-2xl);
+    color: var(--corBordas);
+    background: none;
+    border-radius: 50%;
+    padding: 5px 6px;
+    cursor: pointer;
+    border: 1px solid var(--corBordas);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: var(--corBordas);
+        color: var(--corFundo);
+        rotate: 360deg;
+    }
+}
