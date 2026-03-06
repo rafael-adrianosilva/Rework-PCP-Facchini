@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputFile.value = '';
     });
 
+
     // -------------------------------------------------------------
     // Drag & Drop: Eventos para soltar arquivos diretamente na tela
     // -------------------------------------------------------------
