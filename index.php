@@ -27,11 +27,10 @@
         <div class="banner-txt">
             <div class="extra">
                 <div class="ponto"></div>
-                <p>Sistema PCP</p>
+                <p><?php echo isset($_GET['regiao']) ? 'PCP ' . htmlspecialchars($_GET['regiao']) : 'Sistema PCP'; ?></p>
             </div>
             <div class="textos">
                 <div class="titulo">
-                    <h1>FACCHINI</h1>
                     <h2>Planejamento e Controle da Produção</h2>
                 </div>
                 <div class="descricao">
@@ -48,6 +47,7 @@
     <?php require_once 'php/components/footer.php'; ?>
     <!-- JS -->
     <script src="js/index.js" defer></script>
+    <script src="js/upload.js" defer></script>
 </body>
 
 </html>

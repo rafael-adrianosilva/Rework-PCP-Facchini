@@ -45,6 +45,9 @@
             <button type="button" onclick="closeModal('upTarefas')"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
+            <!-- Campo oculto para armazenar a região selecionada via Navbar -->
+            <input type="hidden" name="regiao" id="regiao_selecionada" value="<?php echo isset($_GET['regiao']) ? htmlspecialchars($_GET['regiao']) : ''; ?>">
+
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <button id="btnUpNormal" class="btn-modelo active-tab" onclick="trocarUploadModal('normal')">Upload
                     Normal</button>
@@ -52,6 +55,7 @@
                     Kits</button>
             </div>
 
+            <!-- Card de envio de Arquivos -->
             <label class="upload-label" for="arquivo">
                 <div class="upload-div">
                     <i class="fas fa-file-upload"></i>
@@ -68,21 +72,15 @@
                     <button type="button">Limpar Tudo</button>
                 </div>
                 <div class="preview-lote" id="preview-arquivos-curso">
-                    <!-- Example Items -->
-                    <div class="arquivo-item">
-                        <div class="arquivo-info">
-                            <div class="icon-bg">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="arquivo-textos">
-                                <strong>Texto Aqui</strong>
-                            </div>
-                        </div>
-                        <div class="arquivo-actions">
-                            <button class="remover-arquivo"><i class="far fa-trash-alt"></i></button>
-                        </div>
-                    </div>
+                    <!-- Arquivos inseridos via JS -->
                 </div>
+            </div>
+
+            <!-- Botão de Envio -->
+            <div style="margin-top: 20px; text-align: right;">
+                <button type="button" id="btnEnviarArquivos" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Enviar Documentos
+                </button>
             </div>
         </div>
     </div>
