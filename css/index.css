@@ -58,6 +58,7 @@
 .titulo h1 {
     color: var(--corBase);
     font-size: var(--text-4xl);
+    font-weight: 900;
 }
 
 .banner-btns {

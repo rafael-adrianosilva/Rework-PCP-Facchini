@@ -6,8 +6,8 @@
     align-items: center;
     z-index: 3;
 
-    background: var(--corFundo2);
-    box-shadow: var(--sombra);
+    background: var(--corAzul);
+    box-shadow: var(--corAzul);
     padding: 10px 30px;
     border-bottom: 1px solid var(--corBordas);
     box-shadow: var(--sombra);
@@ -26,12 +26,12 @@
 #tema,
 .nav-btn {
     font-size: var(--text-lg);
-    color: var(--corTxt3);
+    color: var(--txtClaro);
     background: none;
     border-radius: 8px;
     padding: 8px 12px;
     cursor: pointer;
-    border: 1px solid var(--corBordas);
+    border: none;
     transition: all 0.3s ease;
     box-shadow: var(--sombra);
     display: flex;
@@ -43,7 +43,7 @@
 #tema:hover,
 .nav-btn:hover {
     background: var(--corBordas);
-    color: var(--corFundo);
+    color: var(--corAzul);
 }
 
 .region-selector {
@@ -79,6 +79,6 @@
 }
 
 .region-option:hover {
-    background: var(--corBordas);
+    background: var(--corAzul);
     color: var(--corFundo);
 }

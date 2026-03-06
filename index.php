@@ -31,7 +31,6 @@
             </div>
             <div class="textos">
                 <div class="titulo">
-                    <h1>FACCHINI</h1>
                     <h2>Planejamento e Controle da Produção</h2>
                 </div>
                 <div class="descricao">
