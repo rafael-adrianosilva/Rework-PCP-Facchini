@@ -8,8 +8,13 @@
 }
 
 body {
+    min-width: 100%;
+    min-height: 100vh;
     animation: animacaoCoringa 0.4s forwards ease-in-out;
     background: var(--corFundo);
+    display: flex;
+    flex-direction: column;
+    padding-top: 71px;
 }
 
 @keyframes animacaoCoringa {
@@ -42,7 +47,7 @@ body {
     --text-base: 16px;
     --text-sm: 14px;
 
-    --corBase: #D32F2F;
+    --corBase: #FF0000;
     --corDestaque: #B71C1C;
 
     --corEscura: #333333;

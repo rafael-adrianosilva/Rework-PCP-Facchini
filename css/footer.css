@@ -1,0 +1,19 @@
+.footer {
+    width: 100%;
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--corFundo2);
+    box-shadow: var(--sombra);
+    padding: 10px 30px;
+    border-top: 1px solid var(--corBordas);
+}
+
+.footer div img {
+    width: 75%;
+}
+
+.footer p {
+    color: var(--corTxt3);
+}

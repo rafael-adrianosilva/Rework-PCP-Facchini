@@ -1,3 +1,4 @@
+<?php require_once "php/components/modals.php"; ?>
 <!DOCTYPE html>
 <html lang="pt-br" data-tema="">
 
@@ -9,6 +10,9 @@
     <!-- Css -->
     <link rel="stylesheet" href="css/global.css"> <!-- Global -->
     <link rel="stylesheet" href="css/nav.css"> <!-- Nav -->
+    <link rel="stylesheet" href="css/footer.css"> <!-- Footer -->
+    <link rel="stylesheet" href="css/modal.css"> <!-- Footer -->
+    <link rel="stylesheet" href="css/index.css"> <!-- Index -->
     <link rel="stylesheet" href="assets/vendor/fontawesome-free/css/all.min.css"> <!-- FontAwesome - Icons -->
 
     <!-- Favicon -->
@@ -19,12 +23,29 @@
     <!-- NavBar -->
     <?php require_once 'php/components/nav.php'; ?>
     <!-- Banner -->
-    <section>
-        <div>
-
+    <section class="banner">
+        <div class="banner-txt">
+            <div class="extra">
+                <div class="ponto"></div>
+                <p>Sistema PCP</p>
+            </div>
+            <div class="textos">
+                <div class="titulo">
+                    <h1>FACCHINI</h1>
+                    <h2>Planejamento e Controle da Produção</h2>
+                </div>
+                <div class="descricao">
+                    <p>Gerenciamento e controle sobre seu PCP, em uma única plataforma.</p>
+                </div>
+            </div>
+            <div class="banner-btns">
+                <button type="button" onclick="showModal('upTarefas')">Upload</button>
+                <button type="button" onclick="showModal('gerTarefas')">Gerenciar Tarefas</button>
+            </div>
         </div>
     </section>
-
+    <!-- Footer -->
+    <?php require_once 'php/components/footer.php'; ?>
     <!-- JS -->
     <script src="js/index.js" defer></script>
 </body>

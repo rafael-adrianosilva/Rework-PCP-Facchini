@@ -4,6 +4,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 3;
 
     background: var(--corFundo2);
     box-shadow: var(--sombra);
@@ -25,6 +26,7 @@
     cursor: pointer;
     border: 1px solid var(--corBordas);
     transition: all 0.3s ease;
+    box-shadow: var(--sombra);
 
     &:hover {
         background: var(--corBordas);
