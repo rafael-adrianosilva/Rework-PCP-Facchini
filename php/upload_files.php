@@ -27,6 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Estrutura: documentos/pdfs/Votuporanga/upload_normal/
     $pasta_destino = $diretorio_base . $regiao . '/' . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . '/';
 
+    // Diretório base
+    $diretorio_base = '../documentos/';
+
+    // Define a pasta alvo com base no tipo
+    if ($tipo_upload === 'kit') {
+        $pasta_destino = $diretorio_base . 'upload_kit/';
+    }
+    else {
+        $pasta_destino = $diretorio_base . 'upload_normal/';
+    }
+
     // Tenta criar o diretório se ele não existir
     if (!is_dir($pasta_destino)) {
         if (!mkdir($pasta_destino, 0777, true)) {
