@@ -41,7 +41,16 @@
 
     &:hover {
         background: var(--corBordas);
-        color: var(--txtClaro);
+        color: var(--corAzul);
+    }
+}
+
+#tema {
+    border-radius: 50%;
+    padding: 7px;
+
+    &:hover {
+        rotate: 360deg;
     }
 }
 

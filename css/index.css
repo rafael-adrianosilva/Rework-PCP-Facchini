@@ -1,6 +1,6 @@
 .banner {
-    width: 99%;
-    border-radius: 10px;
+    width: 100%;
+    /* border-radius: 10px; */
     height: 65vh;
     display: flex;
     align-items: center;
