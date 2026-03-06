@@ -48,6 +48,7 @@
     <?php require_once 'php/components/footer.php'; ?>
     <!-- JS -->
     <script src="js/index.js" defer></script>
+    <script src="js/upload.js" defer></script>
 </body>
 
 </html>
