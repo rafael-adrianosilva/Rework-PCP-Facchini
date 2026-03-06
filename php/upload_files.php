@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($arquivosSalvos > 0) {
             $response['sucesso'] = true;
-            $msgBase = "$arquivosSalvos arquivo(s) salvos em '" . ($tipo_upload === 'kit' ? 'upload_kit' : 'upload_normal') . "'.";
+            $msgBase = "$arquivosSalvos arquivo(s) salvos em '" . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . "'.";
             if (count($erros) > 0) {
                 $msgBase .= " Contudo, houve erros: " . implode(" ", $erros);
             }

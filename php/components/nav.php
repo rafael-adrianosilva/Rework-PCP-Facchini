@@ -6,7 +6,7 @@
         <div class="region-selector">
             <button id="btn-region" class="nav-btn" title="Selecionar Região">
                 <i class="fas fa-globe"></i>
-               
+                <span id="selected-region-name"><?php echo isset($_GET['regiao']) ? htmlspecialchars($_GET['regiao']) : 'Sistema PCP'; ?></span>
             </button>
             <div class="region-dropdown" id="region-dropdown">
                 <div class="region-option" data-region="Votuporanga">Votuporanga</div>

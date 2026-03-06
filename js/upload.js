@@ -10,12 +10,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const regionDropdown = document.getElementById('region-dropdown');
     const selectedRegionName = document.getElementById('selected-region-name');
 
-    // Arrays que armazenarão os arquivos PDF separados por tipo
+    // Array que armazenarão os arquivos PDF separados por tipo
     let arquivosNormal = [];
     let arquivosKit = [];
 
     // Controle de estado atual (começa no normal)
     let tipoUploadAtual = 'normal';
+
+    // Persistência de Região
+    const urlParams = new URLSearchParams(window.location.search);
+    const regiaoUrl = urlParams.get('regiao');
+    const regiaoLocal = localStorage.getItem('facchini_pcp_regiao');
+
+    if (regiaoUrl) {
+        // Se tem na URL, salva/atualiza no localStorage
+        localStorage.setItem('facchini_pcp_regiao', regiaoUrl);
+        if (selectedRegionName) {
+            selectedRegionName.textContent = regiaoUrl;
+        }
+        if (inputRegiaoHidden) {
+            inputRegiaoHidden.value = regiaoUrl;
+        }
+    } else if (regiaoLocal) {
+        // Se não tem na URL, mas tem no localStorage, redireciona para a URL com a região
+        const url = new URL(window.location.href);
+        url.searchParams.set('regiao', regiaoLocal);
+        window.location.href = url.toString();
+        return; // Interrompe a execução enquanto redireciona
+    } else {
+        if (selectedRegionName) {
+            selectedRegionName.textContent = "Sistema PCP";
+        }
+    }
 
     // Inicializa a interface
     atualizarLista();
