@@ -2,7 +2,7 @@
     width: 100%;
     margin-top: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     background: var(--corFundo2);
     box-shadow: var(--sombra);
@@ -11,9 +11,6 @@
     height: 80px;
 }
 
-.footer div img {
-    width: 75%;
-}
 
 .footer p {
     color: var(--corTxt3);
