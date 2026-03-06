@@ -45,6 +45,9 @@
             <button type="button" onclick="closeModal('upTarefas')"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
+            <!-- Campo oculto para armazenar a região selecionada via Navbar -->
+            <input type="hidden" name="regiao" id="regiao_selecionada" value="">
+
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                 <button id="btnUpNormal" class="btn-modelo active-tab" onclick="trocarUploadModal('normal')">Upload
                     Normal</button>

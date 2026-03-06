@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLimparTudo = document.querySelector('.enviados-titulo button');
     const uploadLabel = document.querySelector('.upload-label');
     const btnEnviarArquivos = document.getElementById('btnEnviarArquivos');
+    const inputRegiaoHidden = document.getElementById('regiao_selecionada');
+    const btnRegionDropdown = document.getElementById('btn-region');
+    const regionDropdown = document.getElementById('region-dropdown');
+    const selectedRegionName = document.getElementById('selected-region-name');
 
     // Arrays que armazenarão os arquivos PDF separados por tipo
     let arquivosNormal = [];
@@ -76,6 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const formData = new FormData();
         formData.append('tipo_upload', tipoUploadAtual);
+        formData.append('regiao', inputRegiaoHidden.value);
+
+        if (!inputRegiaoHidden.value) {
+            alert('Por favor, selecione uma região na barra de navegação antes de enviar.');
+            return;
+        }
 
         listaAtual.forEach((file) => {
             formData.append('arquivos[]', file);
@@ -131,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const formData = new FormData();
                             formData.append('filename', file.name);
                             formData.append('tipo_upload', tipoUploadAtual);
+                            formData.append('regiao', inputRegiaoHidden.value);
 
                             const response = await fetch('php/check_file.php', {
                                 method: 'POST',
@@ -272,6 +283,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // Atualiza a visualização da lista conforme a nova aba
         atualizarLista();
     };
+
+    // --- Lógica do Dropdown de Regiões ---
+    if (btnRegionDropdown) {
+        btnRegionDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+            regionDropdown.classList.toggle('active');
+        });
+    }
+
+    // Fechar dropdown ao clicar fora
+    document.addEventListener('click', () => {
+        if (regionDropdown) regionDropdown.classList.remove('active');
+    });
+
+    // Seleção de região
+    const regionOptions = document.querySelectorAll('.region-option');
+    regionOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const regiao = option.getAttribute('data-region');
+            if (inputRegiaoHidden) inputRegiaoHidden.value = regiao;
+            if (selectedRegionName) selectedRegionName.innerText = regiao;
+
+            // Log para debug (opcional)
+            console.log(`Região selecionada: ${regiao}`);
+
+            if (regionDropdown) regionDropdown.classList.remove('active');
+        });
+    });
 });
 
 // Fecha Modais
