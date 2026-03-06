@@ -57,10 +57,11 @@ body {
 
     --txtClaro: #FFFFFF;
     --txtEscuro: #000000;
+    --corAzul: #0F172A;
 }
 
 html[data-tema='escuro'] {
-    --corFundo: #1e1f26;
+    --corFundo: #0b1120;
     --corFundo2: #2a2c36;
 
     --sombra: 0 2px 10px rgba(255, 255, 255, .05);

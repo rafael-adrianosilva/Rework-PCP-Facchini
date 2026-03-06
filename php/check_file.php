@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipo_upload = isset($_POST['tipo_upload']) ? $_POST['tipo_upload'] : 'normal';
+    $regiao = isset($_POST['regiao']) ? $_POST['regiao'] : '';
     $filename = isset($_POST['filename']) ? $_POST['filename'] : '';
 
     if (empty($filename)) {
@@ -10,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    $diretorio_base = '../documentos/pdfs/';
+    $pasta_destino = $diretorio_base . $regiao . '/' . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . '/';
     $diretorio_base = '../documentos/';
     $pasta_destino = ($tipo_upload === 'kit') ? $diretorio_base . 'upload_kit/' : $diretorio_base . 'upload_normal/';
 

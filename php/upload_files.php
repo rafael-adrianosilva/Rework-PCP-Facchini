@@ -12,6 +12,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Verifica o tipo de upload (normal ou kit)
     $tipo_upload = isset($_POST['tipo_upload']) ? $_POST['tipo_upload'] : 'normal';
+    $regiao = isset($_POST['regiao']) ? $_POST['regiao'] : '';
+
+    if (empty($regiao)) {
+        $response['mensagem'] = 'Região não selecionada.';
+        echo json_encode($response);
+        exit;
+    }
+
+    // Diretório base
+    $diretorio_base = '../documentos/pdfs/';
+
+    // Define a pasta alvo com base na região e no tipo
+    // Estrutura: documentos/pdfs/Votuporanga/upload_normal/
+    $pasta_destino = $diretorio_base . $regiao . '/' . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . '/';
 
     // Diretório base
     $diretorio_base = '../documentos/';
