@@ -8,6 +8,7 @@
     box-shadow: var(--sombra);
     padding: 10px 30px;
     border-top: 1px solid var(--corBordas);
+    height: 80px;
 }
 
 .footer div img {

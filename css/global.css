@@ -13,7 +13,9 @@ body {
     animation: animacaoCoringa 0.4s forwards ease-in-out;
     background: var(--corFundo);
     display: flex;
+    align-items: center;
     flex-direction: column;
+    align-items: center;
     padding-top: 71px;
 }
 
