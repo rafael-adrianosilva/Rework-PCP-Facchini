@@ -38,8 +38,8 @@
                 </div>
             </div>
             <div class="banner-btns">
-                <button type="button" onclick="showModal('upTarefas')">Upload</button>
-                <button type="button" onclick="showModal('gerTarefas')">Gerenciar Tarefas</button>
+                <button type="button" onclick="showModal('upTarefas')"><i class="fas fa-upload"></i>Upload</button>
+                <button type="button" onclick="showModal('gerTarefas')"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
             </div>
         </div>
     </section>

@@ -10,11 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['existe' => false, 'erro' => 'Nome do arquivo não fornecido']);
         exit;
     }
-
+    
     $diretorio_base = '../documentos/pdfs/';
     $pasta_destino = $diretorio_base . $regiao . '/' . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . '/';
 
-    // Padroniza o nome do arquivo da mesma forma que o upload
     $nomeSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
     $caminhoCompleto = $pasta_destino . $nomeSanitizado;
 

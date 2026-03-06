@@ -17,21 +17,55 @@
                         <th>Status</th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <div>
-                                    <input type="checkbox" name="" id="">#1
-                                </div>
-                            </td>
-                            <td>Text Aqui</td>
-                            <td class="aguardando">Status Aqui</td>
-                        </tr>
+                        <?php
+                            $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+                            $total_tarefas = 0;
+                            
+                            if (!empty($regiao)) {
+                                $base_pcp = dirname(__DIR__, 2);
+                                $diretorios = [
+                                    'Normal' => $base_pcp . "/documentos/pdfs/{$regiao}/upload_normal",
+                                    'Kit' => $base_pcp . "/documentos/pdfs/{$regiao}/upload_kits"
+                                ];
+                                
+                                // Caso especial: o usuário pode ter criado a pasta no singular acidentalmente
+                                if (!is_dir($diretorios['Kit'])) {
+                                    $diretorios['Kit'] = $base_pcp . "/documentos/pdfs/{$regiao}/upload_kit";
+                                }
+
+                                foreach ($diretorios as $tipo => $caminho) {
+                                    if (is_dir($caminho)) {
+                                        $arquivos = scandir($caminho);
+                                        foreach ($arquivos as $arquivo) {
+                                            if ($arquivo !== '.' && $arquivo !== '..') {
+                                                $total_tarefas++;
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <div>
+                                                            <input type="checkbox" name="tarefas[]" value="<?php echo htmlspecialchars($arquivo); ?>">#<?php echo $total_tarefas; ?>
+                                                        </div>
+                                                    </td>
+                                                    <td><?php echo htmlspecialchars($arquivo); ?></td>
+                                                    <td class="aguardando"><?php echo $tipo; ?></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if ($total_tarefas === 0) {
+                                echo "<tr><td colspan='3' style='padding: 20px;'>Nenhum arquivo encontrado para a região " . htmlspecialchars($regiao) . "</td></tr>";
+                            }
+                        ?>
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="modal-footer">
-            <p>0 Tarefas selecionadas.</p>
+            <p><?php echo $total_tarefas; ?> Tarefas encontradas.</p>
             <button onclick="checkTarefa()">MARCAR COMO FEITO</button>
         </div>
     </div>
@@ -41,7 +75,7 @@
 <div class="modal-fundo" id="upTarefas" style="display: none;">
     <div class="modal-box">
         <div class="modal-header">
-            <h2>Upload</h2>
+            <h2>Upload<span id='tipo_up'></span></h2>
             <button type="button" onclick="closeModal('upTarefas')"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -62,7 +96,7 @@
                     <h2>Arraste e solte ou precione para escolher o arquivo</h2>
                     <p>Tamanho máximo por arquivo: 5MB</p>
                     <input type="file" name="arquivo" id="arquivo" accept=".pdf" multiple>
-                    <p class="btn-selecionar">Selecionar Arquivos</p>
+                    <span class="btn-selecionar">Selecionar Arquivos</span>
                 </div>
             </label>
 
