@@ -37,9 +37,9 @@
                     <p>Gerenciamento e controle sobre seu PCP, em uma única plataforma.</p>
                 </div>
             </div>
-            <div class="banner-btns" style="display: none;">
+            <div class="banner-btns" style="display: flex;">
                 <button type="button" onclick="showModal('upTarefas')"><i class="fas fa-upload"></i>Upload</button>
-                <button type="button" onclick="showModal('gerTarefas')"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
+                <button type="button" style="display: none;" onclick="showModal('gerTarefas')"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
             </div>
         </div>
     </section>
@@ -61,11 +61,13 @@
                     'titulo' => 'Upload Normal',
                     'icone'  => 'fa-file-alt',
                     'pasta'  => 'upload_normal',
+                    'cor'    => '#e74c3c'
                 ],
                 'kit' => [
                     'titulo' => 'Upload de Kits',
                     'icone'  => 'fa-boxes',
                     'pasta'  => 'upload_kits',
+                    'cor'    => '#e67e22'
                 ]
             ];
 
@@ -74,7 +76,6 @@
 
                 foreach ($colunas as $tipo => $cfg) {
                     $caminho = $base_pcp . $cfg['pasta'];
-                    // Fallback para singular
                     if ($tipo === 'kit' && !is_dir($caminho)) {
                         $caminho = $base_pcp . 'upload_kit';
                     }
@@ -112,7 +113,6 @@
                                     $caminho_relativo = "documentos/pdfs/{$regiao}/{$pasta_tipo}/{$arquivo}";
 
                                     if ($is_dir_item && $tipo === 'kit') {
-                                        // Contar arquivos dentro da pasta
                                         $sub_count = 0;
                                         $sub_items = scandir($item_path);
                                         foreach ($sub_items as $si) {
@@ -166,7 +166,6 @@
                                         </div>
                                         <?php
                                     } else {
-                                        // Arquivo normal
                                         $file_size = filesize($item_path);
                                         $size_text = $file_size < 1048576 ? round($file_size / 1024, 1) . ' KB' : round($file_size / 1048576, 2) . ' MB';
                                         $file_date = date("d/m/Y H:i", filemtime($item_path));

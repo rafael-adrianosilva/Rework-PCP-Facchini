@@ -41,10 +41,7 @@
 
                         echo '<div class="tarefas-coluna">';
                         echo '<h3>' . $config['titulo'] . '</h3>';
-                        echo '<div class="tarefas-lista">';
-                        echo '<table>';
-                        echo '<thead><tr><th>TAREFA Nº</th><th>TAREFA</th><th>STATUS</th></tr></thead>';
-                        echo '<tbody>';
+                        echo '<div class="tarefas-grid">';
 
                         $tarefas_na_coluna = 0;
                         if (is_dir($caminho)) {
@@ -53,33 +50,40 @@
                                 if ($arquivo !== '.' && $arquivo !== '..') {
                                     $total_tarefas++;
                                     $tarefas_na_coluna++;
+                                    $caminho_item = $caminho . '/' . $arquivo;
+                                    $is_dir = is_dir($caminho_item);
                                     $caminho_relativo = "documentos/pdfs/{$regiao}/" . ($tipo === 'Kit' ? (strpos($caminho, 'upload_kits') !== false ? 'upload_kits' : 'upload_kit') : 'upload_normal') . "/{$arquivo}";
                                     ?>
-                                    <tr>
-                                        <td>
+                                    <div class="tarefa-card">
+                                        <div class="tarefa-info">
                                             <div class="tarefa-checkbox">
                                                 <input type="checkbox" name="tarefas[]" value="<?php echo htmlspecialchars($arquivo); ?>" onchange="updateCounter()">
-                                                <span>#<?php echo $tarefas_na_coluna; ?></span>
                                             </div>
-                                        </td>
-                                        <td class="tarefa-nome">
-                                            <a href="<?php echo $caminho_relativo; ?>" download="<?php echo htmlspecialchars($arquivo); ?>" title="Baixar PDF">
-                                                <?php echo htmlspecialchars($arquivo); ?>
-                                            </a>
-                                        </td>
-                                        <td>
+                                            <div class="tarefa-icon">
+                                                <i class="fas <?php echo $is_dir ? 'fa-folder' : 'fa-file-pdf'; ?>"></i>
+                                            </div>
+                                            <div class="tarefa-detalhes">
+                                                <a href="<?php echo $caminho_relativo; ?>" class="tarefa-nome" <?php echo $is_dir ? '' : 'download="' . htmlspecialchars($arquivo) . '"'; ?>>
+                                                    <?php echo htmlspecialchars($arquivo); ?>
+                                                </a>
+                                                <div class="tarefa-meta">
+                                                    <span>#<?php echo $tarefas_na_coluna; ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tarefa-acoes">
                                             <span class="status-badge pendente">PENDENTE</span>
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </div>
                                     <?php
                                 }
                             }
                         }
 
                         if ($tarefas_na_coluna === 0) {
-                            echo "<tr><td colspan='3' class='vazio'>Nenhuma tarefa</td></tr>";
+                            echo "<div class='vazio'>Nenhuma tarefa encontrada</div>";
                         }
-                        echo '</tbody></table></div></div>';
+                        echo '</div></div>';
                     }
                 } else {
                     echo "<p class='vazio'>Selecione uma região para gerenciar tarefas.</p>";
@@ -100,7 +104,7 @@
 <div class="modal-fundo" id="upTarefas" style="display: none;">
     <div class="modal-box">
         <div class="modal-header">
-            <h2>Upload<span id='tipo_up'></span></h2>
+            <h2>Upload<span id='tipo_up'> Normal</span> <?php echo $_GET['regiao']; ?></h2>
             <button type="button" onclick="closeModal('upTarefas')"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -136,9 +140,9 @@
             </div>
 
             <!-- Botão de Envio -->
-            <div style="margin-top: 20px; text-align: right;">
-                <button type="button" id="btnEnviarArquivos" style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
-                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Enviar Documentos
+            <div class="div-btn">
+                <button type="button" id="btnEnviarArquivos">
+                     Enviar Documentos<i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>

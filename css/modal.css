@@ -37,6 +37,10 @@
     font-size: var(--text-lg);
 }
 
+#tipo_up {
+    color: var(--corBase);
+}
+
 .modal-header button {
     background: none;
     border: none;
@@ -143,6 +147,29 @@
     }
 }
 
+#btnEnviarArquivos {
+    background-color: #28a745;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+
+    &:hover {
+        background: #1c7230;
+    }
+}
+
+.div-btn {
+    width: 100%;
+}
+
 /* Estilos Novos para Gerenciar Tarefas */
 .modal-body-split {
     display: flex;
@@ -168,7 +195,6 @@
     text-align: center;
     color: var(--corBase);
     font-size: 1.2rem;
-    font-weight: 800;
     margin-bottom: 10px;
 }
 
@@ -185,7 +211,7 @@
 
 .tarefas-lista th {
     font-size: 0.75rem;
-    font-weight: 800;
+    font-style: italic;
     color: var(--corTxt3);
     text-align: left;
     padding: 8px;
@@ -477,5 +503,29 @@
 
     &:hover {
         color: var(--corBase);
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-body-split {
+        flex-direction: column;
+        flex-wrap: wrap;
+        overflow: auto;
+    }
+
+    .tarefas-coluna:first-child {
+        border: none;
+    }
+}
+
+@media (max-width: 1080px) {
+    .modal-body-split {
+        flex-direction: column;
+        flex-wrap: wrap;
+        overflow: auto;
+    }
+
+    .tarefas-coluna:first-child {
+        border: none;
     }
 }
