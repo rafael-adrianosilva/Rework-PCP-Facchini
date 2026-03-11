@@ -194,3 +194,51 @@ function formatarTamanho(bytes) {
     }
     return (bytes / 1024).toFixed(1) + ' KB';
 }
+// Função para atualizar o contador de tarefas selecionadas
+function atualizarContagemTarefas() {
+    const container = document.querySelector("#gerTarefas");
+    if (container) {
+        const selecionadas = container.querySelectorAll('.tarefas tbody input[type="checkbox"]:checked').length;
+        const pQuantidade = container.querySelector(".modal-footer p");
+        if (pQuantidade) {
+            pQuantidade.textContent = selecionadas + (selecionadas === 1 ? " Tarefa selecionada." : " Tarefas selecionadas.");
+        }
+    }
+}
+
+// Event listener para atualizar a contagem toda vez que um checkbox for clicado na tabela
+document.addEventListener("change", function(e) {
+    if (e.target.matches('#gerTarefas .tarefas tbody input[type="checkbox"]')) {
+        atualizarContagemTarefas();
+    }
+});
+
+// Função chamada ao clicar em MARCAR COMO FEITO
+function checkTarefa() {
+    const container = document.querySelector("#gerTarefas");
+    const checkboxes = container.querySelectorAll('.tarefas tbody input[type="checkbox"]');
+    let alteradas = 0;
+
+    checkboxes.forEach(chk => {
+        if (chk.checked) {
+            const linha = chk.closest("tr");
+            const statusTd = linha.querySelectorAll("td")[2]; // 3ª coluna
+            
+            // Alterando o status visualmente
+            statusTd.textContent = "Concluída";
+            statusTd.className = "concluida";
+            statusTd.style.color = "#28a745"; // Cor verde
+            statusTd.style.fontWeight = "bold";
+            
+            // Desmarca o checkbox
+            chk.checked = false;
+            alteradas++;
+        }
+    });
+
+    if (alteradas > 0) {
+        atualizarContagemTarefas();
+    } else {
+        alert("Selecione pelo menos uma tarefa para marcar como feita.");
+    }
+}

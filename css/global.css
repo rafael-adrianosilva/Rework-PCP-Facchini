@@ -13,9 +13,10 @@ body {
     animation: animacaoCoringa 0.4s forwards ease-in-out;
     background: var(--corFundo);
     display: flex;
+    align-items: center;
     flex-direction: column;
     align-items: center;
-    padding-top: 71px;
+    padding-top: 55px;
 }
 
 @keyframes animacaoCoringa {
@@ -48,7 +49,7 @@ body {
     --text-base: 16px;
     --text-sm: 14px;
 
-    --corBase: #FF0000;
+    --corBase: #ED1D23;
     --corDestaque: #B71C1C;
 
     --corEscura: #333333;
@@ -56,10 +57,11 @@ body {
 
     --txtClaro: #FFFFFF;
     --txtEscuro: #000000;
+    --corAzul: #0F172A;
 }
 
 html[data-tema='escuro'] {
-    --corFundo: #1e1f26;
+    --corFundo: #0b1120;
     --corFundo2: #2a2c36;
 
     --sombra: 0 2px 10px rgba(255, 255, 255, .05);
