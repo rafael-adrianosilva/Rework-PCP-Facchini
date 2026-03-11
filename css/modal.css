@@ -479,3 +479,106 @@
         color: var(--corBase);
     }
 }
+
+/* ================================================
+   Modal Gerenciar Tarefas — Listagem de Arquivos
+   ================================================ */
+
+.modal-box-lg {
+    width: 70%;
+    max-width: 900px;
+}
+
+/* Barra de filtros */
+.filtros-arquivo {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn-filtro {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s all ease;
+    border: 1px solid var(--corBordas);
+    background: var(--corFundo);
+    color: var(--corTxt3);
+
+    &:hover {
+        background: var(--corBase);
+        color: var(--corBranca);
+        border-color: var(--corBase);
+    }
+}
+
+.btn-filtro.active-filtro {
+    background: var(--corBase);
+    color: var(--corBranca);
+    border-color: var(--corBase);
+}
+
+.btn-refresh {
+    margin-left: auto;
+    padding: 7px 12px;
+}
+
+/* Badges de tipo */
+.badge-tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-normal {
+    background: rgba(40, 167, 69, 0.12);
+    color: #1e7e34;
+}
+
+.badge-kit {
+    background: rgba(0, 123, 255, 0.12);
+    color: #0056b3;
+}
+
+/* Estado da tabela (loading / vazio / erro) */
+.tabela-estado {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--corTxt3);
+    font-size: 14px;
+}
+
+.tabela-vazia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--corTxt3);
+    font-size: 14px;
+}
+
+.tabela-vazia i {
+    font-size: 28px;
+    opacity: 0.5;
+}
+
+/* Coluna nome — truncamento elegante */
+.nome-arquivo {
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    padding-left: 12px;
+}
