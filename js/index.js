@@ -39,6 +39,7 @@ function showModal(qualModal) {
     switch (qualModal) {
         case 'gerTarefas':
             document.getElementById(qualModal).style.display = "flex";
+            carregarArquivos(); // Carrega os arquivos ao abrir a modal
             break;
         case 'upTarefas':
             document.getElementById(qualModal).style.display = "flex";
@@ -76,6 +77,123 @@ function trocarUploadModal(tipo) {
     }
 }
 
+// -----------------------------------------------------------
+// Gerenciar Tarefas — Listagem e Filtro de Arquivos
+// -----------------------------------------------------------
+
+// Cache dos arquivos carregados
+let _todosArquivos = [];
+let _filtroAtivo = 'todos';
+
+/**
+ * Busca os arquivos no servidor e renderiza a tabela.
+ */
+function carregarArquivos() {
+    const corpo = document.getElementById('corpoTabelaArquivos');
+    const contador = document.getElementById('contadorArquivos');
+    const iconRef = document.getElementById('iconRefresh');
+
+    // Animação de loading
+    if (iconRef) iconRef.classList.add('fa-spin');
+
+    corpo.innerHTML = `
+        <tr>
+            <td colspan="5" class="tabela-estado">
+                <i class="fas fa-spinner fa-spin"></i> Carregando arquivos...
+            </td>
+        </tr>`;
+
+    fetch('php/listar_arquivos.php')
+        .then(res => res.json())
+        .then(data => {
+            if (data.sucesso) {
+                _todosArquivos = data.arquivos || [];
+                renderizarTabela(_filtroAtivo);
+            } else {
+                corpo.innerHTML = `<tr><td colspan="5" class="tabela-estado tabela-vazia">
+                    <i class="fas fa-exclamation-circle"></i> Erro ao carregar arquivos.
+                </td></tr>`;
+            }
+        })
+        .catch(() => {
+            corpo.innerHTML = `<tr><td colspan="5" class="tabela-estado tabela-vazia">
+                <i class="fas fa-wifi-slash"></i> Não foi possível conectar ao servidor.
+            </td></tr>`;
+        })
+        .finally(() => {
+            if (iconRef) iconRef.classList.remove('fa-spin');
+        });
+}
+
+/**
+ * Filtra e exibe os arquivos conforme o tipo selecionado.
+ * @param {string} tipo - 'todos', 'upload_normal' ou 'upload_kit'
+ */
+function filtrarArquivos(tipo) {
+    _filtroAtivo = tipo;
+
+    // Atualiza classes dos botões de filtro
+    document.querySelectorAll('.btn-filtro[data-filtro]').forEach(btn => {
+        btn.classList.toggle('active-filtro', btn.dataset.filtro === tipo);
+    });
+
+    renderizarTabela(tipo);
+}
+
+/**
+ * Renderiza as linhas da tabela com base no filtro.
+ * @param {string} tipo
+ */
+function renderizarTabela(tipo) {
+    const corpo = document.getElementById('corpoTabelaArquivos');
+    const contador = document.getElementById('contadorArquivos');
+
+    const lista = tipo === 'todos'
+        ? _todosArquivos
+        : _todosArquivos.filter(a => a.tipo === tipo);
+
+    contador.textContent = `${lista.length} arquivo(s) encontrado(s).`;
+
+    if (lista.length === 0) {
+        corpo.innerHTML = `
+            <tr>
+                <td colspan="5" class="tabela-estado tabela-vazia">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Nenhum arquivo encontrado${tipo !== 'todos' ? ' nesta categoria' : ''}.</span>
+                </td>
+            </tr>`;
+        return;
+    }
+
+    corpo.innerHTML = lista.map((arq, idx) => {
+        const badge = arq.tipo === 'upload_kit'
+            ? '<span class="badge-tipo badge-kit"><i class="fas fa-boxes"></i> Kit</span>'
+            : '<span class="badge-tipo badge-normal"><i class="fas fa-file-pdf"></i> Normal</span>';
+
+        return `
+            <tr>
+                <td>${idx + 1}</td>
+                <td class="nome-arquivo" title="${arq.nome}">
+                    <i class="fas fa-file-pdf" style="color:#d93025; margin-right:6px;"></i>${arq.nome}
+                </td>
+                <td>${badge}</td>
+                <td>${arq.data}</td>
+                <td>${formatarTamanho(arq.tamanho)}</td>
+            </tr>`;
+    }).join('');
+}
+
+/**
+ * Formata bytes em KB ou MB legível.
+ * @param {number} bytes
+ * @returns {string}
+ */
+function formatarTamanho(bytes) {
+    if (bytes >= 1024 * 1024) {
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    }
+    return (bytes / 1024).toFixed(1) + ' KB';
+}
 // Função para atualizar o contador de tarefas selecionadas
 function atualizarContagemTarefas() {
     const container = document.querySelector("#gerTarefas");
