@@ -4,7 +4,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background: var(--corFundo2);
+    background: var(--corAzul);
     box-shadow: var(--sombra);
     padding: 10px 30px;
     border-top: 1px solid var(--corBordas);
@@ -13,5 +13,5 @@
 
 
 .footer p {
-    color: var(--corTxt3);
+    color: var(--txtClaro);
 }

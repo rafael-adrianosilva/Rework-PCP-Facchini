@@ -1,6 +1,6 @@
 .banner {
-    width: 99%;
-    border-radius: 10px;
+    width: 100%;
+    /* border-radius: 10px; */
     height: 65vh;
     display: flex;
     align-items: center;
@@ -59,6 +59,7 @@
 .titulo h1 {
     color: var(--corBase);
     font-size: var(--text-4xl);
+    font-weight: 900;
 }
 
 .banner-btns {

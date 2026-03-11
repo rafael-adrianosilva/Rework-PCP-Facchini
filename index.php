@@ -27,11 +27,10 @@
         <div class="banner-txt">
             <div class="extra">
                 <div class="ponto"></div>
-                <p>Sistema PCP</p>
+                <p><?php echo isset($_GET['regiao']) ? 'PCP ' . htmlspecialchars($_GET['regiao']) : 'Sistema PCP'; ?></p>
             </div>
             <div class="textos">
                 <div class="titulo">
-                    <h1>FACCHINI</h1>
                     <h2>Planejamento e Controle da Produção</h2>
                 </div>
                 <div class="descricao">
@@ -40,6 +39,7 @@
             </div>
             <div class="banner-btns">
                 <button type="button" onclick="showModal('upTarefas')"><i class="fas fa-upload"></i>Upload PDF</button>
+                <button type="button" onclick="showModal('upTarefas')"><i class="fas fa-upload"></i>Upload</button>
                 <button type="button" onclick="showModal('gerTarefas')"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
             </div>
 
