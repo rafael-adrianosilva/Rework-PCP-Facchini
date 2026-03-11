@@ -102,6 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         listaAtual.forEach((file) => {
             formData.append('arquivos[]', file);
+            // Enviar caminho relativo para preservar estrutura de pastas em kits
+            if (tipoUploadAtual === 'kit' && file.webkitRelativePath) {
+                formData.append('caminhos[]', file.webkitRelativePath);
+            } else {
+                formData.append('caminhos[]', file.name);
+            }
         });
 
         const textoOriginal = btnEnviarArquivos.innerHTML;
@@ -128,6 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         arquivosKit = [];
                     }
                     atualizarLista();
+                    // Recarregar página para atualizar a listagem de arquivos
+                    setTimeout(() => window.location.reload(), 500);
                 } else {
                     alert('Erro: ' + data.mensagem);
                 }
@@ -143,42 +151,21 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    async function adicionarArquivos(novosArquivos) {
+    function adicionarArquivos(novosArquivos) {
         let adicionouAlgo = false;
         let arrayAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         for (let file of novosArquivos) {
-            // Regra: ser PDF e possuir no máximo 5MB
             if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
                 if (file.size <= 5 * 1024 * 1024) {
-                    const jaExisteNaLista = arrayAtual.some(f => f.name === file.name);
-                    if (!jaExisteNaLista) {
-                        try {
-                            const formData = new FormData();
-                            formData.append('filename', file.name);
-                            formData.append('tipo_upload', tipoUploadAtual);
-                            formData.append('regiao', inputRegiaoHidden.value);
-
-                            const response = await fetch('php/check_file.php', {
-                                method: 'POST',
-                                body: formData
-                            });
-
-                            const data = await response.json();
-
-                            if (data.existe) {
-                                alert(`O arquivo "${file.name}" já foi enviado para o servidor na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} e não pode ser reenviado.`);
-                            } else {
-                                arrayAtual.push(file);
-                                adicionouAlgo = true;
-                            }
-                        } catch (error) {
-                            console.error('Erro na checagem do arquivo:', error);
-                            alert(`Falha ao checar o arquivo "${file.name}". Tente novamente.`);
-                        }
+                    // Se já existe na lista, substitui
+                    const indexExistente = arrayAtual.findIndex(f => f.name === file.name);
+                    if (indexExistente !== -1) {
+                        arrayAtual[indexExistente] = file;
                     } else {
-                        alert(`O arquivo "${file.name}" já está na lista atual.`);
+                        arrayAtual.push(file);
                     }
+                    adicionouAlgo = true;
                 } else {
                     alert(`O arquivo "${file.name}" excede o tamanho máximo de 5MB.`);
                 }
@@ -197,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         if (listaAtual.length === 0) {
-            previewContainer.innerHTML = '<p style="text-align: center; color: #777; padding: 20px; width: 100%;">Nenhum PDF selecionado nesta aba.</p>';
+            previewContainer.innerHTML = '<p style="text-align: center; color: var(--corTxt3); padding: 20px; width: 100%;">Nenhum PDF selecionado nesta aba.</p>';
             previewContainer.style.overflowY = 'visible';
             previewContainer.style.maxHeight = 'auto';
             return;
@@ -268,24 +255,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const btnNormal = document.getElementById('btnUpNormal');
         const btnKit = document.getElementById('btnUpKit');
+        const inputFile = document.getElementById('arquivo');
 
         if (tipo === 'normal') {
             if (btnNormal) {
                 btnNormal.classList.add('active-tab');
                 btnNormal.classList.remove('inactive-tab');
+                document.getElementById("tipo_up").innerText = " Normal";
             }
             if (btnKit) {
                 btnKit.classList.add('inactive-tab');
                 btnKit.classList.remove('active-tab');
             }
+            // Para upload normal, desativa seleção de pasta
+            if (inputFile) {
+                inputFile.removeAttribute('webkitdirectory');
+                inputFile.removeAttribute('directory');
+                inputFile.setAttribute('multiple', '');
+            }
         } else {
             if (btnKit) {
                 btnKit.classList.add('active-tab');
                 btnKit.classList.remove('inactive-tab');
+                document.getElementById("tipo_up").innerText = " de Kits";
             }
             if (btnNormal) {
                 btnNormal.classList.add('inactive-tab');
                 btnNormal.classList.remove('active-tab');
+            }
+            // Para upload de kits, ativa seleção de pasta (e arquivos múltiplos)
+            if (inputFile) {
+                inputFile.setAttribute('webkitdirectory', '');
+                inputFile.setAttribute('directory', '');
+                inputFile.setAttribute('multiple', '');
             }
         }
         atualizarLista();
@@ -403,3 +405,4 @@ window.closeModal = function (modalId) {
         modal.style.display = 'none';
     }
 };
+

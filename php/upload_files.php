@@ -34,6 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $arquivosSalvos = 0;
         $erros = [];
 
+        // Receber caminhos relativos para preservar estrutura de pastas (kits)
+        $caminhos = isset($_POST['caminhos']) ? $_POST['caminhos'] : [];
+
         for ($i = 0; $i < $totalArquivos; $i++) {
             $nomeOriginal = $_FILES['arquivos']['name'][$i];
             $tmpName = $_FILES['arquivos']['tmp_name'][$i];
@@ -57,13 +60,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 continue;
             }
 
-            $nomeSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $nomeOriginal);
-            $caminhoCompleto = $pasta_destino . $nomeSanitizado;
+            // Determinar caminho de destino
+            $destino_final = $pasta_destino;
 
-            if (file_exists($caminhoCompleto)) {
-                $erros[] = "O arquivo $nomeOriginal já existe no servidor e foi pulado.";
-                continue;
+            if ($tipo_upload === 'kit' && isset($caminhos[$i]) && strpos($caminhos[$i], '/') !== false) {
+                // Extrair pasta do webkitRelativePath (ex: "NomePasta/arquivo.pdf")
+                $partes = explode('/', $caminhos[$i]);
+                // Remover o nome do arquivo (último elemento) e manter pasta(s)
+                array_pop($partes);
+                $subpasta = implode('/', $partes);
+
+                // Sanitizar
+                $subpasta = preg_replace('/[^a-zA-Z0-9_\-\/\s\.]/', '', $subpasta);
+
+                if (!empty($subpasta)) {
+                    $destino_final = $pasta_destino . $subpasta . '/';
+                    if (!is_dir($destino_final)) {
+                        mkdir($destino_final, 0777, true);
+                    }
+                }
             }
+
+            $nomeSanitizado = $nomeOriginal;
+            $caminhoCompleto = $destino_final . $nomeSanitizado;
 
             if (move_uploaded_file($tmpName, $caminhoCompleto)) {
                 $arquivosSalvos++;
