@@ -54,7 +54,7 @@
 
     <hr>
 
-    <!-- Container que receberá os arquivos recém-enviados -->
+    <!-- Container que receberá os arquivos recém-enviados ...-->
     <div id="container-recentes" style="max-width: 1200px; margin: 20px auto; padding: 0 10px; display: flex; flex-direction: column; gap: 9px;">
         <?php
         $pastas = [
