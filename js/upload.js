@@ -122,6 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 if (data.sucesso) {
                     alert(data.mensagem);
+                    
+                    // Mostra os arquivos recém-enviados na index
+                    adicionarArquivosRecentesNaTela(listaAtual, tipoUploadAtual);
+
+                    // Limpa a lista atual após envio
 
                     if (tipoUploadAtual === 'normal') {
                         arquivosNormal = [];
@@ -288,6 +293,89 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarLista();
     };
 
+    // Função que insere visualmente os arquivos confirmados no container da página
+    function adicionarArquivosRecentesNaTela(arquivos, tipo) {
+        const containerRecentes = document.getElementById('container-recentes');
+        if (!containerRecentes) return;
+
+        arquivos.forEach(file => {
+            const dataAtual = new Date();
+            const horas = String(dataAtual.getHours()).padStart(2, '0');
+            const minutos = String(dataAtual.getMinutes()).padStart(2, '0');
+            const dataFormatada = dataAtual.toLocaleDateString('pt-BR') + ' às ' + horas + ':' + minutos;
+            
+            const item = document.createElement('div');
+            item.className = 'recente-item animated-entry';
+            item.style.display = 'flex';
+            item.style.justifyContent = 'space-between';
+            item.style.alignItems = 'center';
+            item.style.padding = '15px 25px';
+            item.style.backgroundColor = '#ffffff';
+            item.style.border = '1px solid #e1e1e1';
+            item.style.borderRadius = '8px';
+            item.style.boxShadow = '0 3px 8px rgba(0,0,0,0.04)';
+            item.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+            
+            const fileSizeInfo = (file.size / 1024 / 1024).toFixed(2);
+            const sizeText = fileSizeInfo < 1 ? (file.size / 1024).toFixed(2) + ' KB' : fileSizeInfo + ' MB';
+            const badgeCustom = tipo === 'kit' 
+                ? '<span style="background-color: #ff9800; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 12px; letter-spacing: 0.5px;">KIT</span>' 
+                : '<span style="background-color: #007bff; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 12px; letter-spacing: 0.5px;">NORMAL</span>';
+
+            item.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 18px; max-width: 75%;">
+                    <div style="color: #d93025; font-size: 28px; background: rgba(217,48,37,0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div style="display: flex; flex-direction: column; overflow: hidden;">
+                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
+                            <strong style="color: #333; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${file.name}</strong>
+                            ${badgeCustom}
+                        </div>
+                        <div style="color: #777; font-size: 13px; display: flex; gap: 8px;">
+                            <span><i class="fas fa-weight-hanging" style="font-size: 11px; margin-right: 4px;"></i>${sizeText}</span> • 
+                            <span><i class="far fa-clock" style="font-size: 11px; margin-right: 4px;"></i>Enviado em ${dataFormatada}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <span style="background-color: #e8f5e9; color: #2e7d32; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; display: flex; align-items: center;">
+                        <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Concluído
+                    </span>
+                    <button onclick="alert('Funcionalidade de detalhar futuramente!')" style="background: none; border: 1px solid #ddd; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: #555; font-weight: 600; font-size: 13px; transition: 0.2s;">
+                        Detalhes
+                    </button>
+                </div>
+            `;
+            
+            // Efeito visual no hover para os itens novos
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-2px)';
+                item.style.boxShadow = '0 5px 15px rgba(0,0,0,0.08)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+                item.style.boxShadow = '0 3px 8px rgba(0,0,0,0.04)';
+            });
+            
+            // Adiciona no topo da lista
+            containerRecentes.insertBefore(item, containerRecentes.firstChild);
+        });
+        
+        // Exibe feedback temporário na section message
+        const messageDesc = document.querySelector('.message p');
+        if (messageDesc) {
+            const originalText = messageDesc.textContent;
+            messageDesc.textContent = "Novos arquivos adicionados recentemente!";
+            messageDesc.style.color = "#28a745";
+            messageDesc.style.fontWeight = "bold";
+            setTimeout(() => {
+                messageDesc.textContent = originalText;
+                messageDesc.style.color = "";
+                messageDesc.style.fontWeight = "";
+            }, 3000);
+        }
+    }
     if (btnRegionDropdown) {
         btnRegionDropdown.addEventListener('click', (e) => {
             e.stopPropagation();

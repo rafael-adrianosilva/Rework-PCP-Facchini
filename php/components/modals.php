@@ -1,14 +1,56 @@
 <!-- Modal Gerenciar Tarefas -->
 <div class="modal-fundo" id="gerTarefas" style="display: none;">
-    <div class="modal-box">
+    <div class="modal-box modal-box-lg">
         <div class="modal-header">
             <h2>GERENCIAR TAREFAS</h2>
             <button type="button" onclick="closeModal('gerTarefas')"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div class="modal-subheader">
-                <p>Selecione as ordens para processamento em lote ou alteração de status.</p>
+                <p>Arquivos enviados para o servidor. Use os filtros para navegar entre os tipos.</p>
             </div>
+
+            <!-- Botões de Filtro -->
+            <div class="filtros-arquivo" id="filtrosArquivo">
+                <button class="btn-filtro active-filtro" data-filtro="todos" onclick="filtrarArquivos('todos')">
+                    <i class="fas fa-layer-group"></i> Todos
+                </button>
+                <button class="btn-filtro" data-filtro="upload_normal" onclick="filtrarArquivos('upload_normal')">
+                    <i class="fas fa-file-pdf"></i> Upload Normal
+                </button>
+                <button class="btn-filtro" data-filtro="upload_kit" onclick="filtrarArquivos('upload_kit')">
+                    <i class="fas fa-boxes"></i> Upload Kit
+                </button>
+                <button class="btn-filtro btn-refresh" onclick="carregarArquivos()" title="Atualizar lista">
+                    <i class="fas fa-sync-alt" id="iconRefresh"></i>
+                </button>
+            </div>
+
+            <!-- Tabela de Arquivos -->
+            <div class="tarefas">
+                <table id="tabelaArquivos">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Nome do Arquivo</th>
+                            <th>Tipo</th>
+                            <th>Data de Envio</th>
+                            <th>Tamanho</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabelaArquivos">
+                        <!-- Populado via JS -->
+                        <tr id="linhaLoading">
+                            <td colspan="5" class="tabela-estado">
+                                <i class="fas fa-spinner fa-spin"></i> Carregando arquivos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p id="contadorArquivos">0 arquivo(s) encontrado(s).</p>
             <div class="modal-body-split">
                 <?php
                 $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
