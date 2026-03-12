@@ -1,13 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     const inputFile = document.getElementById('arquivo');
+    const inputKitPdf = document.getElementById('arquivo_kit_pdf');
     const previewContainer = document.getElementById('preview-arquivos-curso');
     const btnLimparTudo = document.querySelector('.enviados-titulo button');
-    const uploadLabel = document.querySelector('.upload-label');
+    const uploadLabel = document.getElementById('uploadLabelArea');
     const btnEnviarArquivos = document.getElementById('btnEnviarArquivos');
     const inputRegiaoHidden = document.getElementById('regiao_selecionada');
     const btnRegionDropdown = document.getElementById('btn-region');
     const regionDropdown = document.getElementById('region-dropdown');
     const selectedRegionName = document.getElementById('selected-region-name');
+    const btnSelecionarPrincipal = document.getElementById('btnSelecionarPrincipal');
+    const btnSelecionarKitPdf = document.getElementById('btnSelecionarKitPdf');
 
     let arquivosNormal = [];
     let arquivosKit = [];
@@ -43,6 +46,36 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarArquivos(Array.from(e.target.files));
         inputFile.value = '';
     });
+
+    // Listener para o input de PDFs avulsos no modo Kit
+    if (inputKitPdf) {
+        inputKitPdf.addEventListener('change', (e) => {
+            adicionarArquivos(Array.from(e.target.files));
+            inputKitPdf.value = '';
+        });
+    }
+
+    // Gerenciador de cliques para os botões e área de upload
+    if (btnSelecionarPrincipal) {
+        btnSelecionarPrincipal.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (inputFile) inputFile.click();
+        });
+    }
+
+    if (btnSelecionarKitPdf) {
+        btnSelecionarKitPdf.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (inputKitPdf) inputKitPdf.click();
+        });
+    }
+
+    if (uploadLabel) {
+        uploadLabel.addEventListener('click', (e) => {
+            // Se clicar na área do card (fora dos botões), aciona o seletor principal
+            if (inputFile) inputFile.click();
+        });
+    }
 
 
     uploadLabel.addEventListener('dragover', (e) => {
@@ -268,6 +301,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 inputFile.removeAttribute('directory');
                 inputFile.setAttribute('multiple', '');
             }
+            // Mostrar apenas botão principal com texto padrão
+            if (btnSelecionarPrincipal) {
+                btnSelecionarPrincipal.textContent = 'Selecionar Arquivos';
+                btnSelecionarPrincipal.style.display = '';
+            }
+            if (btnSelecionarKitPdf) {
+                btnSelecionarKitPdf.style.display = 'none';
+            }
         } else {
             if (btnKit) {
                 btnKit.classList.add('active-tab');
@@ -278,11 +319,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnNormal.classList.add('inactive-tab');
                 btnNormal.classList.remove('active-tab');
             }
-            // Para upload de kits, ativa seleção de pasta (e arquivos múltiplos)
+            // Para upload de kits, ativa seleção de pasta no input principal
             if (inputFile) {
                 inputFile.setAttribute('webkitdirectory', '');
                 inputFile.setAttribute('directory', '');
                 inputFile.setAttribute('multiple', '');
+            }
+            // Mostrar dois botões: pasta e PDF avulso
+            if (btnSelecionarPrincipal) {
+                btnSelecionarPrincipal.textContent = 'Selecionar Pasta';
+                btnSelecionarPrincipal.style.display = '';
+            }
+            if (btnSelecionarKitPdf) {
+                btnSelecionarKitPdf.style.display = '';
             }
         }
         atualizarLista();

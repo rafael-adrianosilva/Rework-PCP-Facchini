@@ -119,15 +119,20 @@
             </div>
 
             <!-- Card de envio de Arquivos -->
-            <label class="upload-label" for="arquivo">
+            <input type="file" name="arquivo" id="arquivo" accept=".pdf" multiple style="display: none;">
+            <input type="file" name="arquivo_kit_pdf" id="arquivo_kit_pdf" accept=".pdf" multiple style="display: none;">
+            
+            <div class="upload-label" id="uploadLabelArea" style="cursor: pointer;">
                 <div class="upload-div">
                     <i class="fas fa-file-upload"></i>
                     <h2>Arraste e solte ou precione para escolher o arquivo</h2>
                     <p>Tamanho máximo por arquivo: 5MB</p>
-                    <input type="file" name="arquivo" id="arquivo" accept=".pdf" multiple>
-                    <span class="btn-selecionar">Selecionar Arquivos</span>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <span class="btn-selecionar" id="btnSelecionarPrincipal">Selecionar Arquivos</span>
+                        <span class="btn-selecionar" id="btnSelecionarKitPdf" style="display: none;">Selecionar Arquivos PDF</span>
+                    </div>
                 </div>
-            </label>
+            </div>
 
             <div class="enviados-section">
                 <div class="enviados-titulo">
