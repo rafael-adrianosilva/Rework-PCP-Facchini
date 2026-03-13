@@ -58,16 +58,14 @@
 
             $colunas = [
                 'normal' => [
-                    'titulo' => 'Upload Normal',
+                    'titulo' => 'PDFs',
                     'icone'  => 'fa-file-alt',
                     'pasta'  => 'upload_normal',
-                    'cor'    => '#e74c3c'
                 ],
                 'kit' => [
-                    'titulo' => 'Upload de Kits',
+                    'titulo' => 'Kits de PDFs',
                     'icone'  => 'fa-boxes',
                     'pasta'  => 'upload_kits',
-                    'cor'    => '#e67e22'
                 ]
             ];
 

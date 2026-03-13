@@ -51,24 +51,26 @@
                 <p class="extra"><?php date_default_timezone_set('America/Sao_Paulo');
                                     echo date("d/m/Y") ?></p>
             </div>
-        </div>
+            </div>
+            <div class="listagem-pesquisa">
+                <input type="text" placeholder="Pesquise os PDFs e Pastas"><button><i class="fas fa-search"></i></button>
+            </div>
         <div class="listagem-split">
             <?php
             $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
 
             $colunas = [
                 'normal' => [
-                    'titulo' => 'Upload Normal',
+                    'titulo' => 'PDFS',
                     'icone'  => 'fa-file-alt',
                     'pasta'  => 'upload_normal',
                 ],
                 'kit' => [
-                    'titulo' => 'Upload de Kits',
+                    'titulo' => 'Kits de PDFS',
                     'icone'  => 'fa-boxes',
                     'pasta'  => 'upload_kits',
                 ]
             ];
-
             if (!empty($regiao)) {
                 $base_pcp = dirname(__DIR__) . "/pcp/documentos/pdfs/{$regiao}/";
 

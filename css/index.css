@@ -125,6 +125,50 @@
     color: var(--corTxt3);
 }
 
+.listagem-pesquisa{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--corBordas);
+    box-shadow: var(--sombra);
+    background: var(--corFundo2);
+}
+
+.listagem-pesquisa button{
+    padding: 15px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+    font-size: var(--text-2xl);
+    color: var(--corBordas);
+    &:hover{
+        /* background: var(--corFundo); */
+        color: var(--corBase);
+    }
+}
+
+.listagem-pesquisa input{
+    width: 90%;
+    border-radius: 3px;
+    padding: 15px;
+    border: none;
+    border-bottom: 1px solid var(--corBordas);
+    background: transparent;
+    outline: none;
+    font-size: var(--text-md);
+    color: var(--corTxt3);
+    transition: 0.5s all ease-in-out;
+    &:focus{
+        border-color: var(--corBase);
+    }
+
+}
+
 .listagem-split {
     display: flex;
     gap: 24px;
