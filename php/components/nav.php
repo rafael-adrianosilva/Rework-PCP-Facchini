@@ -1,6 +1,6 @@
 <nav class="navbar">
     <div class="navbar-img">
-        <img src="assets/imgs/logo_facchini.png" alt="Logo Facchini">
+        <img onclick="trocarPagina()" src="assets/imgs/logo_facchini.png" alt="Logo Facchini">
     </div>
     <div class="navbar-items">
         <div class="region-selector">

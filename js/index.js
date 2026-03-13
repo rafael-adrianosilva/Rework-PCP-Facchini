@@ -80,3 +80,13 @@ function trocarUploadModal(tipo) {
         btnUpNormal.className = "btn-modelo inactive-tab";
     }
 }
+
+function trocarPagina(){
+    var pageAtual = window.location.href
+
+    if(pageAtual.includes('uploads.php')){
+        window.location.href = 'index.php'
+    } else {
+        window.location.href = 'uploads.php'
+    }
+}

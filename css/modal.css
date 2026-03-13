@@ -10,6 +10,7 @@
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(3px);
+    overflow: auto;
 }
 
 .modal-box {
@@ -590,7 +591,6 @@
 #error-txt {
     color: oklch(92.96% 0.03092 17.535);
 }
-
 
 @media (max-width: 768px) {
     .modal-body-split {

@@ -14,6 +14,7 @@
 }
 
 .navbar-img img {
+    cursor: pointer;
     width: 75%;
 }
 
