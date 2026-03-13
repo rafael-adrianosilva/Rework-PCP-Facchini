@@ -506,7 +506,8 @@
     }
 }
 
-#sucesso, #error {
+#sucesso,
+#error {
     position: fixed;
     top: 0;
     left: 0;
@@ -526,7 +527,8 @@
     /* não bloqueia cliques atrás */
 
     animation: toastIn 0.45s cubic-bezier(.22, .61, .36, 1),
-        toastOut 0.4s ease-in-out 3.2s forwards;
+        toastOut 0.4s ease-in-out 0.4s forwards;
+    backdrop-filter: none;
 }
 
 /* ENTRADA */

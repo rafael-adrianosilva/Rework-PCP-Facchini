@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     atualizarLista();
                     // Recarregar página para atualizar a listagem de arquivos
-                    setTimeout(() => window.location.reload(), 1500);
+                    setTimeout(() => window.location.reload(), 1000);
                 } else {
                     exibirErro('Erro: ' + data.mensagem);
                 }
