@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         if (listaAtual.length === 0) {
-            alert(`Nenhum arquivo na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} para enviar.`);
+            exibirErro(`Nenhum arquivo na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} para enviar.`);
             return;
         }
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('regiao', inputRegiaoHidden.value);
 
         if (!inputRegiaoHidden.value) {
-            alert('Por favor, selecione uma região na barra de navegação antes de enviar.');
+            exibirErro('Por favor, selecione uma região na barra de navegação antes de enviar.');
             return;
         }
 
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.sucesso) {
-                    alert(data.mensagem);
+                    exibirSucesso(data.mensagem);
 
                     if (tipoUploadAtual === 'normal') {
                         arquivosNormal = [];
@@ -163,14 +163,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     atualizarLista();
                     // Recarregar página para atualizar a listagem de arquivos
-                    setTimeout(() => window.location.reload(), 500);
+                    setTimeout(() => window.location.reload(), 1500);
                 } else {
-                    alert('Erro: ' + data.mensagem);
+                    exibirErro('Erro: ' + data.mensagem);
                 }
             })
             .catch(error => {
                 console.error('Erro no envio:', error);
-                alert('Ocorreu um erro ao enviar os arquivos.');
+                exibirErro('Ocorreu um erro ao enviar os arquivos.');
             })
             .finally(() => {
 
@@ -195,10 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     adicionouAlgo = true;
                 } else {
-                    alert(`O arquivo "${file.name}" excede o tamanho máximo de 5MB.`);
+                    exibirErro(`O arquivo "${file.name}" excede o tamanho máximo de 5MB.`);
                 }
             } else {
-                alert(`O arquivo "${file.name}" não é um PDF válido.`);
+                exibirErro(`O arquivo "${file.name}" não é um PDF válido.`);
             }
         }
 
@@ -359,11 +359,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
-window.closeModal = function (modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
-};
 

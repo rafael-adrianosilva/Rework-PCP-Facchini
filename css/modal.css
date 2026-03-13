@@ -506,6 +506,90 @@
     }
 }
 
+#sucesso, #error {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.0);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    padding: 20;
+    /* sem área extra */
+    z-index: 9999;
+
+    pointer-events: none;
+    /* não bloqueia cliques atrás */
+
+    animation: toastIn 0.45s cubic-bezier(.22, .61, .36, 1),
+        toastOut 0.4s ease-in-out 3.2s forwards;
+}
+
+/* ENTRADA */
+@keyframes toastIn {
+    from {
+        transform: translateY(-15px) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* SAÍDA */
+@keyframes toastOut {
+    to {
+        transform: translateY(-10px) scale(0.96);
+        opacity: 0;
+        display: none;
+    }
+}
+
+#sucesso-box {
+    width: 320px;
+    background: oklch(76.864% 0.16957 161.631 / 0.75);
+    border: 1px solid oklch(76.5% 0.177 163.223);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    pointer-events: auto;
+    /* botão clicável */
+}
+
+#sucesso-txt {
+    color: oklch(96.782% 0.03253 170.226);
+}
+
+#error-box {
+    width: 320px;
+    background: oklch(54.626% 0.22417 29.223 / 0.75);
+    border: 1px solid oklch(54.626% 0.22417 29.223);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    pointer-events: auto;
+    /* botão clicável */
+}
+
+#error-txt {
+    color: oklch(92.96% 0.03092 17.535);
+}
+
+
 @media (max-width: 768px) {
     .modal-body-split {
         flex-direction: column;

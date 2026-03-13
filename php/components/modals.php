@@ -11,49 +11,49 @@
             </div>
             <div class="modal-body-split">
                 <?php
-                $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
-                $total_tarefas = 0;
-                $tarefas_selecionadas = 0;
+$regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+$total_tarefas = 0;
+$tarefas_selecionadas = 0;
 
-                $config_diretorios = [
-                    'Normal' => [
-                        'titulo' => 'UPLOAD NORMAL',
-                        'pasta' => 'upload_normal',
-                        'cor' => 'var(--corBase)'
-                    ],
-                    'Kit' => [
-                        'titulo' => 'UPLOAD KIT',
-                        'pasta' => 'upload_kits',
-                        'cor' => 'var(--corBase)'
-                    ]
-                ];
+$config_diretorios = [
+    'Normal' => [
+        'titulo' => 'UPLOAD NORMAL',
+        'pasta' => 'upload_normal',
+        'cor' => 'var(--corBase)'
+    ],
+    'Kit' => [
+        'titulo' => 'UPLOAD KIT',
+        'pasta' => 'upload_kits',
+        'cor' => 'var(--corBase)'
+    ]
+];
 
-                if (!empty($regiao)) {
-                    $base_pcp = dirname(__DIR__, 2);
+if (!empty($regiao)) {
+    $base_pcp = dirname(__DIR__, 2);
 
-                    foreach ($config_diretorios as $tipo => $config) {
-                        $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/" . $config['pasta'];
-                        
-                        // Fallback para 'upload_kit' no singular
-                        if ($tipo === 'Kit' && !is_dir($caminho)) {
-                            $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/upload_kit";
-                        }
+    foreach ($config_diretorios as $tipo => $config) {
+        $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/" . $config['pasta'];
 
-                        echo '<div class="tarefas-coluna">';
-                        echo '<h3>' . $config['titulo'] . '</h3>';
-                        echo '<div class="tarefas-grid">';
+        // Fallback para 'upload_kit' no singular
+        if ($tipo === 'Kit' && !is_dir($caminho)) {
+            $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/upload_kit";
+        }
 
-                        $tarefas_na_coluna = 0;
-                        if (is_dir($caminho)) {
-                            $arquivos = scandir($caminho);
-                            foreach ($arquivos as $arquivo) {
-                                if ($arquivo !== '.' && $arquivo !== '..') {
-                                    $total_tarefas++;
-                                    $tarefas_na_coluna++;
-                                    $caminho_item = $caminho . '/' . $arquivo;
-                                    $is_dir = is_dir($caminho_item);
-                                    $caminho_relativo = "documentos/pdfs/{$regiao}/" . ($tipo === 'Kit' ? (strpos($caminho, 'upload_kits') !== false ? 'upload_kits' : 'upload_kit') : 'upload_normal') . "/{$arquivo}";
-                                    ?>
+        echo '<div class="tarefas-coluna">';
+        echo '<h3>' . $config['titulo'] . '</h3>';
+        echo '<div class="tarefas-grid">';
+
+        $tarefas_na_coluna = 0;
+        if (is_dir($caminho)) {
+            $arquivos = scandir($caminho);
+            foreach ($arquivos as $arquivo) {
+                if ($arquivo !== '.' && $arquivo !== '..') {
+                    $total_tarefas++;
+                    $tarefas_na_coluna++;
+                    $caminho_item = $caminho . '/' . $arquivo;
+                    $is_dir = is_dir($caminho_item);
+                    $caminho_relativo = "documentos/pdfs/{$regiao}/" . ($tipo === 'Kit' ? (strpos($caminho, 'upload_kits') !== false ? 'upload_kits' : 'upload_kit') : 'upload_normal') . "/{$arquivo}";
+?>
                                     <div class="tarefa-card">
                                         <div class="tarefa-info">
                                             <div class="tarefa-checkbox">
@@ -76,19 +76,20 @@
                                         </div>
                                     </div>
                                     <?php
-                                }
-                            }
-                        }
-
-                        if ($tarefas_na_coluna === 0) {
-                            echo "<div class='vazio'>Nenhuma tarefa encontrada</div>";
-                        }
-                        echo '</div></div>';
-                    }
-                } else {
-                    echo "<p class='vazio'>Selecione uma região para gerenciar tarefas.</p>";
                 }
-                ?>
+            }
+        }
+
+        if ($tarefas_na_coluna === 0) {
+            echo "<div class='vazio'>Nenhuma tarefa encontrada</div>";
+        }
+        echo '</div></div>';
+    }
+}
+else {
+    echo "<p class='vazio'>Selecione uma região para gerenciar tarefas.</p>";
+}
+?>
             </div>
         </div>
         <div class="modal-footer-custom">
@@ -150,6 +151,36 @@
                      Enviar Documentos<i class="fas fa-paper-plane"></i>
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Sucesso -->
+<div class="modal-fundo" id="sucesso" style="display: none;">
+    <div class="modal-box" id="sucesso-box">
+        <div class="modal-header">
+            <h5 id="sucesso-txt">SUCESSO</h5>
+            <button type="button" onclick="closeModal('sucesso')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p id="sucesso-msg" style="font-size: var(--text-sm);">
+                Operação realizada com sucesso.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Erro -->
+<div class="modal-fundo" id="error" style="display: none;">
+    <div class="modal-box" id="error-box">
+        <div class="modal-header">
+            <h5 id="error-txt">ERRO</h5>
+            <button type="button" onclick="closeModal('error')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p id="error-msg" style="font-size: var(--text-sm);">
+                Ocorreu um erro ao processar a solicitação.
+            </p>
         </div>
     </div>
 </div>

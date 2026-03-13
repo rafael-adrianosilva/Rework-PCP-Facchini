@@ -36,29 +36,34 @@ function changeTheme() {
 
 //Função para abrir Modals
 function showModal(qualModal) {
-    switch (qualModal) {
-        case 'gerTarefas':
-            document.getElementById(qualModal).style.display = "flex";
-            break;
-        case 'upTarefas':
-            document.getElementById(qualModal).style.display = "flex";
-            break;
-        default:
-            break;
+    const modal = document.getElementById(qualModal);
+    if (modal) {
+        modal.style.display = "flex";
     }
 }
 
 //Função para fechar Modals
 function closeModal(qualModal) {
-    switch (qualModal) {
-        case 'gerTarefas':
-            document.getElementById(qualModal).style.display = "none";
-            break;
-        case 'upTarefas':
-            document.getElementById(qualModal).style.display = "none";
-            break;
-        default:
-            break;
+    const modal = document.getElementById(qualModal);
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+// Funções para exibir mensagens de sucesso e erro
+function exibirSucesso(mensagem) {
+    const msgElement = document.getElementById('sucesso-msg');
+    if (msgElement) {
+        msgElement.innerText = mensagem;
+        showModal('sucesso');
+    }
+}
+
+function exibirErro(mensagem) {
+    const msgElement = document.getElementById('error-msg');
+    if (msgElement) {
+        msgElement.innerText = mensagem;
+        showModal('error');
     }
 }
 
