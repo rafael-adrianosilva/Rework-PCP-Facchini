@@ -27,7 +27,26 @@ $regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mir
                 </div>
             <?php endif; ?>
         <?php else: ?>
-            <!-- Sem seletor de região na visualização (removido conforme solicitado) -->
+            <!-- Seletor de Região Dinâmico -->
+            <div class="region-selector">
+                <button type="button" class="nav-btn" id="btn-region" title="Selecione sua Região">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="selected-region-name"><?php echo !empty($regiao_atual) ? htmlspecialchars($regiao_atual) : 'Região não definida'; ?></span>
+                    <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+                </button>
+                <div class="region-dropdown" id="region-dropdown">
+                    <div class="region-option" data-region="">
+                        <i class="fas fa-globe-americas" style="margin-right: 8px;"></i>Todas as Regiões
+                    </div>
+                    <div class="region-separator"></div>
+                    <?php foreach ($regioes_validas as $reg): ?>
+                        <div class="region-option" data-region="<?php echo $reg; ?>">
+                            <?php echo $reg; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <input type="hidden" id="regiao_selecionada" value="<?php echo htmlspecialchars($regiao_atual); ?>">
         <?php endif; ?>
         <button id="tema" onclick="changeTheme()"><i class="fas fa-moon"></i></button>
     </div>

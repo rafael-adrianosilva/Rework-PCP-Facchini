@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedRegionName) selectedRegionName.textContent = valRegiao;
     } else {
         localStorage.removeItem('facchini_pcp_regiao');
-        if (selectedRegionName) selectedRegionName.textContent = "Sistema PCP";
+        if (selectedRegionName) selectedRegionName.textContent = "Região não definida";
     }
 
     atualizarLista();
