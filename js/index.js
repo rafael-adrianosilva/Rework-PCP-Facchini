@@ -90,3 +90,82 @@ function trocarPagina(){
         window.location.href = 'uploads.php'
     }
 }
+
+// Lógica para a barra de pesquisa de PDFs e Pastas
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.querySelector('.listagem-pesquisa input');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const termo = this.value.toLowerCase().trim();
+            
+            // Seleciona todas as colunas de upload
+            const colunas = document.querySelectorAll('.upload-coluna-body');
+            
+            colunas.forEach(coluna => {
+                const filhos = coluna.children;
+                
+                for (let i = 0; i < filhos.length; i++) {
+                    const elem = filhos[i];
+                    
+                    // Se for um arquivo solto
+                    if (elem.classList.contains('arquivo-card') && !elem.classList.contains('pasta-card')) {
+                        const nomeElem = elem.querySelector('.arquivo-card-nome');
+                        if (nomeElem) {
+                            const nome = nomeElem.innerText.toLowerCase();
+                            if (nome.includes(termo)) {
+                                elem.style.display = 'flex';
+                            } else {
+                                elem.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    // Se for uma pasta
+                    if (elem.classList.contains('pasta-card')) {
+                        const pastaNomeElem = elem.querySelector('.arquivo-card-nome');
+                        const pastaNome = pastaNomeElem ? pastaNomeElem.innerText.toLowerCase() : '';
+                        const conteudo = elem.nextElementSibling; // div.pasta-conteudo
+                        let temFilhoCorrespondente = false;
+                        
+                        if (conteudo && conteudo.classList.contains('pasta-conteudo')) {
+                            const arquivosAninhados = conteudo.querySelectorAll('.arquivo-card');
+                            arquivosAninhados.forEach(arq => {
+                                const arqNomeElem = arq.querySelector('.arquivo-card-nome');
+                                if (arqNomeElem) {
+                                    const arqNome = arqNomeElem.innerText.toLowerCase();
+                                    if (arqNome.includes(termo)) {
+                                        arq.style.display = 'flex';
+                                        temFilhoCorrespondente = true;
+                                    } else {
+                                        arq.style.display = 'none';
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // Mostra a pasta se o nome da pasta bater ou algum filho bater
+                        if (pastaNome.includes(termo) || temFilhoCorrespondente) {
+                            elem.style.display = 'flex';
+                            
+                            // Se estiver pesquisando, abre a pasta para ver o filho que encontrou
+                            if (termo !== '' && temFilhoCorrespondente) {
+                                conteudo.style.display = 'flex';
+                                const chevron = elem.querySelector('.pasta-chevron');
+                                if (chevron) chevron.classList.add('aberto');
+                            } else if (termo === '') {
+                                // Se limpou a pesquisa, fecha as pastas
+                                conteudo.style.display = 'none';
+                                const chevron = elem.querySelector('.pasta-chevron');
+                                if (chevron) chevron.classList.remove('aberto');
+                            }
+                        } else {
+                            elem.style.display = 'none';
+                            if (conteudo) conteudo.style.display = 'none';
+                        }
+                    }
+                }
+            });
+        });
+    }
+});

@@ -133,11 +133,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        let pastaKit = '';
+        if (tipoUploadAtual === 'kit') {
+            const selectPastaKit = document.getElementById('selectPastaKit');
+            pastaKit = selectPastaKit ? selectPastaKit.value : '';
+            if (!pastaKit) {
+                exibirErro('Por favor, selecione ou crie um Kit de Destino antes de enviar.');
+                return;
+            }
+        }
+
         listaAtual.forEach((file) => {
             formData.append('arquivos[]', file);
-            // Enviar caminho relativo para preservar estrutura de pastas em kits
-            if (tipoUploadAtual === 'kit' && file.webkitRelativePath) {
-                formData.append('caminhos[]', file.webkitRelativePath);
+            // Enviar caminho relativo para preservar estrutura de pastas em kits ou colocar na pasta certa do kit
+            if (tipoUploadAtual === 'kit') {
+                if (file.webkitRelativePath) {
+                    formData.append('caminhos[]', pastaKit + '/' + file.webkitRelativePath);
+                } else {
+                    formData.append('caminhos[]', pastaKit + '/' + file.name);
+                }
             } else {
                 formData.append('caminhos[]', file.name);
             }
@@ -284,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnNormal = document.getElementById('btnUpNormal');
         const btnKit = document.getElementById('btnUpKit');
         const inputFile = document.getElementById('arquivo');
+        const areaSelecaoKit = document.getElementById('areaSelecaoKit');
 
         if (tipo === 'normal') {
             if (btnNormal) {
@@ -294,6 +309,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnKit) {
                 btnKit.classList.add('inactive-tab');
                 btnKit.classList.remove('active-tab');
+            }
+            if (areaSelecaoKit) {
+                areaSelecaoKit.style.display = 'none';
             }
             // Para upload normal, desativa seleção de pasta
             if (inputFile) {
@@ -318,6 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnNormal) {
                 btnNormal.classList.add('inactive-tab');
                 btnNormal.classList.remove('active-tab');
+            }
+            if (areaSelecaoKit) {
+                areaSelecaoKit.style.display = 'flex';
             }
             // Para upload de kits, ativa seleção de pasta no input principal
             if (inputFile) {
@@ -358,5 +379,125 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = url.toString();
         });
     });
+
+    // Lógica para criar Nova Pasta (Kit)
+    const btnSalvarNovoKit = document.getElementById('btnSalvarNovoKit');
+    if (btnSalvarNovoKit) {
+        btnSalvarNovoKit.addEventListener('click', () => {
+            const nomeKitElem = document.getElementById('nomeNovaPastaKit');
+            const nomeKit = nomeKitElem ? nomeKitElem.value.trim() : '';
+            const regiao = inputRegiaoHidden ? inputRegiaoHidden.value : '';
+
+            if (!nomeKit) {
+                exibirErro('Digite o nome do Kit.');
+                return;
+            }
+            if (!regiao) {
+                exibirErro('Região não selecionada.');
+                return;
+            }
+
+            const formDataKit = new FormData();
+            formDataKit.append('nome_pasta', nomeKit);
+            formDataKit.append('regiao', regiao);
+
+            const textoOriginal = btnSalvarNovoKit.innerHTML;
+            btnSalvarNovoKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando...';
+            btnSalvarNovoKit.disabled = true;
+
+            fetch('php/actions/criar_pasta_kit.php', {
+                method: 'POST',
+                body: formDataKit
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    closeModal('criarKitModal');
+                    const selectPastaKit = document.getElementById('selectPastaKit');
+                    if (selectPastaKit) {
+                        const option = document.createElement('option');
+                        option.value = data.nome_pasta;
+                        option.textContent = data.nome_pasta;
+                        selectPastaKit.appendChild(option);
+                        selectPastaKit.value = data.nome_pasta; // já seleciona o criado
+                    }
+                    if (nomeKitElem) nomeKitElem.value = '';
+                    exibirSucesso(data.mensagem);
+                } else {
+                    exibirErro('Erro: ' + data.mensagem);
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao criar kit:', err);
+                exibirErro('Ocorreu um erro ao criar o Kit.');
+            })
+            .finally(() => {
+                btnSalvarNovoKit.innerHTML = textoOriginal;
+                btnSalvarNovoKit.disabled = false;
+            });
+        });
+    }
+
+    // Lógica para mostrar/esconder botão de exclusão de acordo com o select e Lógica de exclusão do Kit
+    const selectPastaKit = document.getElementById('selectPastaKit');
+    const btnExcluirKit = document.getElementById('btnExcluirKit');
+
+    if (selectPastaKit && btnExcluirKit) {
+        selectPastaKit.addEventListener('change', () => {
+            if (selectPastaKit.value !== "") {
+                btnExcluirKit.style.display = 'flex';
+            } else {
+                btnExcluirKit.style.display = 'none';
+            }
+        });
+
+        btnExcluirKit.addEventListener('click', () => {
+            const nomeKit = selectPastaKit.value;
+            const regiao = inputRegiaoHidden ? inputRegiaoHidden.value : '';
+
+            if (!nomeKit) return; // Segurança caso o select não tenha valor real
+
+            const confirmacao = confirm(`Tem certeza que deseja EXCLUIR o kit "${nomeKit}" e TODOS os seus arquivos? Esta ação não pode ser desfeita.`);
+            if (!confirmacao) return;
+
+            const formDataExcluirKit = new FormData();
+            formDataExcluirKit.append('nome_pasta', nomeKit);
+            formDataExcluirKit.append('regiao', regiao);
+
+            const textoOriginalE = btnExcluirKit.innerHTML;
+            btnExcluirKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btnExcluirKit.disabled = true;
+
+            fetch('php/actions/excluir_pasta_kit.php', {
+                method: 'POST',
+                body: formDataExcluirKit
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    exibirSucesso(data.mensagem);
+                    // Remove do dropdown
+                    Array.from(selectPastaKit.options).forEach(opt => {
+                        if (opt.value === nomeKit) {
+                            opt.remove();
+                        }
+                    });
+                    // Oculta botao
+                    btnExcluirKit.style.display = 'none';
+                    selectPastaKit.value = '';
+                } else {
+                    exibirErro('Erro: ' + data.mensagem);
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao excluir kit:', err);
+                exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
+            })
+            .finally(() => {
+                btnExcluirKit.innerHTML = textoOriginalE;
+                btnExcluirKit.disabled = false;
+            });
+        });
+    }
 });
 

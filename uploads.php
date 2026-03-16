@@ -52,6 +52,9 @@
                                     echo date("d/m/Y") ?></p>
             </div>
         </div>
+        <div class="listagem-pesquisa">
+            <input type="text" placeholder="Pesquise os PDFs e Pastas"><button><i class="fas fa-search"></i></button>
+        </div>
         <div class="listagem-split">
             <?php
             $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';

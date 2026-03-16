@@ -113,10 +113,35 @@ else {
             <input type="hidden" name="regiao" id="regiao_selecionada" value="<?php echo isset($_GET['regiao']) ? htmlspecialchars($_GET['regiao']) : ''; ?>">
 
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button id="btnUpNormal" class="btn-modelo active-tab" onclick="trocarUploadModal('normal')">Upload
-                    Normal</button>
-                <button id="btnUpKit" class="btn-modelo inactive-tab" onclick="trocarUploadModal('kit')">Upload de
-                    Kits</button>
+                <button id="btnUpNormal" class="btn-modelo active-tab" onclick="trocarUploadModal('normal')">Upload Normal</button>
+                <button id="btnUpKit" class="btn-modelo inactive-tab" onclick="trocarUploadModal('kit')">Upload de Kits</button>
+            </div>
+
+            <!-- Seleção de Kit de Destino (só mostra no upload de kit) -->
+            <div id="areaSelecaoKit" class="area-selecao-kit">
+                <label for="selectPastaKit">Selecione o Kit de Destino:</label>
+                <div class="agrupamento-select-kit">
+                    <select id="selectPastaKit" class="select-kit">
+                        <option value="">-- Selecione ou Crie um Kit --</option>
+                        <?php
+                        $reg = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+                        if (!empty($reg)) {
+                            $b_pcp = dirname(__DIR__, 2);
+                            $cKits = $b_pcp . "/documentos/pdfs/{$reg}/upload_kits";
+                            if (is_dir($cKits)) {
+                                $pKits = scandir($cKits);
+                                foreach ($pKits as $pkt) {
+                                    if ($pkt !== '.' && $pkt !== '..' && is_dir($cKits . '/' . $pkt)) {
+                                        echo '<option value="' . htmlspecialchars($pkt) . '">' . htmlspecialchars($pkt) . '</option>';
+                                    }
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
+                    <button type="button" title="Criar Novo Kit" onclick="showModal('criarKitModal')" class="btn-criar-kit"><i class="fas fa-folder-plus"></i></button>
+                    <button type="button" title="Excluir Kit Selecionado" id="btnExcluirKit" class="btn-excluir-kit"><i class="fas fa-trash-alt"></i></button>
+                </div>
             </div>
 
             <!-- Card de envio de Arquivos -->
@@ -149,6 +174,27 @@ else {
             <div class="div-btn">
                 <button type="button" id="btnEnviarArquivos">
                      Enviar Documentos<i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Criar Kit -->
+<div class="modal-fundo" id="criarKitModal" style="display: none; z-index: 1000;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>Novo Kit de PDF</h2>
+            <button type="button" onclick="closeModal('criarKitModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label for="nomeNovaPastaKit" style="color: var(--corTxt3); font-weight: bold; font-size: 14px;">Nome do Kit (Pasta):</label>
+                <input type="text" id="nomeNovaPastaKit" placeholder="Ex: Kit Motor" style="padding: 10px; border-radius: 5px; border: 1px solid var(--corBordas); width: 100%; background: var(--corFundo); color: var(--corTxt3); outline: none;">
+            </div>
+            <div class="div-btn" style="margin-top: 20px;">
+                <button type="button" id="btnSalvarNovoKit" class="btn-criar-kit" style="width: 100%; padding: 10px; font-weight: bold; font-size: 15px; gap: 8px;">
+                     Criar Kit <i class="fas fa-folder-plus"></i>
                 </button>
             </div>
         </div>
