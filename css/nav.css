@@ -93,3 +93,33 @@
         color: var(--corAzul);
     }
 }
+
+/* Badge de região travada — exibido na página de uploads */
+.region-locked-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(6px);
+    color: var(--txtClaro);
+    font-size: var(--text-md);
+    font-weight: 600;
+    cursor: default;
+    user-select: none;
+}
+
+.region-locked-badge.region-locked-warning {
+    background: rgba(229, 62, 62, 0.2);
+    border-color: rgba(229, 62, 62, 0.4);
+    color: #feb2b2;
+}
+
+/* Separador visual no dropdown de regiões */
+.region-separator {
+    height: 1px;
+    background: var(--corBordas);
+    margin: 4px 0;
+}
