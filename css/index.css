@@ -497,3 +497,103 @@ a.arquivo-card-nome:hover {
         font-size: 15px;
     }
 }
+
+/* ================================================================
+   Dashboard Global de Regiões (index.php sem region selecionada)
+   ================================================================ */
+
+.dashboard-regioes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.dashboard-card-regiao {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--corBordas);
+    border-radius: 14px;
+    background: var(--corFundo2);
+    text-decoration: none;
+    box-shadow: var(--sombra);
+    overflow: hidden;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.dashboard-card-regiao:hover {
+    border-color: var(--corBase);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 22px 16px;
+    background: var(--corFundo);
+    border-bottom: 1px solid var(--corBordas);
+}
+
+.dashboard-card-header i {
+    font-size: 18px;
+    color: var(--corBase);
+}
+
+.dashboard-card-header h4 {
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--corTxt);
+    margin: 0;
+}
+
+.dashboard-card-stats {
+    display: flex;
+    gap: 16px;
+    padding: 16px 22px;
+    flex: 1;
+}
+
+.dashboard-stat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: var(--text-md);
+    color: var(--corTxt3);
+}
+
+.dashboard-stat i {
+    color: var(--corBase);
+    font-size: 14px;
+}
+
+.dashboard-card-footer {
+    padding: 12px 22px;
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--corBase);
+    border-top: 1px solid var(--corBordas);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: gap 0.2s ease;
+}
+
+.dashboard-card-regiao:hover .dashboard-card-footer {
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-regioes {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .dashboard-card-header h4 {
+        font-size: var(--text-md);
+    }
+}

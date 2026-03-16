@@ -103,12 +103,24 @@ function trocarUploadModal(tipo) {
 }
 
 function trocarPagina(){
-    var pageAtual = window.location.href
+    var urlAtual = new URL(window.location.href);
+    var regiaoAtual = urlAtual.searchParams.get('regiao');
+    var pageAtual = window.location.href;
 
-    if(pageAtual.includes('uploads.php')){
-        window.location.href = 'index.php'
+    if (pageAtual.includes('uploads.php')) {
+        // Voltando para a visualização: preserva a região
+        if (regiaoAtual) {
+            window.location.href = 'index.php?regiao=' + encodeURIComponent(regiaoAtual);
+        } else {
+            window.location.href = 'index.php';
+        }
     } else {
-        window.location.href = 'uploads.php'
+        // Indo para o upload: se há região, vai direto para ela
+        if (regiaoAtual) {
+            window.location.href = 'uploads.php?regiao=' + encodeURIComponent(regiaoAtual);
+        } else {
+            window.location.href = 'uploads.php';
+        }
     }
 }
 

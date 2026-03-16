@@ -1,4 +1,10 @@
-<?php require_once "php/components/modals.php"; ?>
+<?php
+// Lista de regiões válidas — única fonte de verdade
+$regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mirassol', 'Aparecida Taboado'];
+$regiao_url = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+$regiao_valida = in_array($regiao_url, $regioes_validas);
+require_once "php/components/modals.php";
+?>
 <!DOCTYPE html>
 <html lang="pt-br" data-tema="">
 
@@ -27,7 +33,7 @@
         <div class="banner-txt">
             <div class="extra">
                 <div class="ponto"></div>
-                <p><?php echo isset($_GET['regiao']) ? 'PCP ' . htmlspecialchars($_GET['regiao']) : 'Sistema PCP'; ?></p>
+                <p>Upload — <?php echo $regiao_valida ? htmlspecialchars($regiao_url) : 'Região Inválida'; ?></p>
             </div>
             <div class="textos">
                 <div class="titulo">
@@ -37,10 +43,12 @@
                     <p>Gerenciamento e controle sobre seu PCP, em uma única plataforma.</p>
                 </div>
             </div>
+            <?php if ($regiao_valida): ?>
             <div class="banner-btns" style="display: flex;">
                 <button type="button" onclick="showModal('upTarefas')"><i class="fas fa-upload"></i>Upload</button>
-                <button type="button" style="display: none;" onclick="showModal('gerTarefas')"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
+                <button type="button" onclick="showModal('gerTarefas')" style="display: none;"><i class="fas fa-list"></i>Gerenciar Tarefas</button>
             </div>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -57,7 +65,7 @@
         </div>
         <div class="listagem-split">
             <?php
-            $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+            $regiao = $regiao_valida ? $regiao_url : '';
 
             $colunas = [
                 'normal' => [
@@ -72,7 +80,15 @@
                 ]
             ];
 
-            if (!empty($regiao)) {
+            if (!$regiao_valida) {
+                // Exibir mensagem de erro se nenhuma região válida foi fornecida
+                echo '<div class="listagem-vazio-full" style="flex-direction: column; gap: 20px;">';
+                echo '<i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e;"></i>';
+                echo '<h3 style="color: var(--corTxt3);">Região não definida ou inválida</h3>';
+                echo '<p style="color: var(--corTxt3); max-width: 400px; text-align: center;">Para enviar arquivos, acesse esta página com uma URL contendo a sua região. Exemplo:</p>';
+                echo '<code style="background: var(--corFundo); padding: 8px 16px; border-radius: 6px; color: var(--corBase); border: 1px solid var(--corBordas);">uploads.php?regiao=Votuporanga</code>';
+                echo '</div>';
+            } else if (!empty($regiao)) {
                 $base_pcp = __DIR__ . "/documentos/pdfs/{$regiao}/";
 
                 foreach ($colunas as $tipo => $cfg) {
@@ -219,8 +235,6 @@
                     </div>
                     <?php
                 }
-            } else {
-                echo '<div class="listagem-vazio-full"><i class="fas fa-map-marker-alt"></i><p>Selecione uma região para visualizar os arquivos.</p></div>';
             }
             ?>
         </div>

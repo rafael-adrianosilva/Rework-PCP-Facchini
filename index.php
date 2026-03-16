@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/global.css"> <!-- Global -->
     <link rel="stylesheet" href="css/nav.css"> <!-- Nav -->
     <link rel="stylesheet" href="css/footer.css"> <!-- Footer -->
-    <link rel="stylesheet" href="css/modal.css"> <!-- Footer -->
+    <link rel="stylesheet" href="css/modal.css"> <!-- Modal -->
     <link rel="stylesheet" href="css/index.css"> <!-- Index -->
     <link rel="stylesheet" href="assets/vendor/fontawesome-free/css/all.min.css"> <!-- FontAwesome - Icons -->
 
@@ -27,7 +27,7 @@
         <div class="banner-txt">
             <div class="extra">
                 <div class="ponto"></div>
-                <p><?php echo isset($_GET['regiao']) ? 'PCP ' . htmlspecialchars($_GET['regiao']) : 'Sistema PCP'; ?></p>
+                <p><?php echo isset($_GET['regiao']) ? 'PCP ' . htmlspecialchars($_GET['regiao']) : 'Sistema PCP — Todas as Regiões'; ?></p>
             </div>
             <div class="textos">
                 <div class="titulo">
@@ -44,21 +44,30 @@
         </div>
     </section>
 
+    <?php
+    // Lista de regiões válidas — única fonte de verdade
+    $regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mirassol', 'Aparecida Taboado'];
+    $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+    // Validar a região recebida contra a lista
+    if (!in_array($regiao, $regioes_validas)) {
+        $regiao = '';
+    }
+    ?>
+
     <section class='listagem'>
         <div class="listagem-header">
-            <h3>Lista de Arquivos Disponíveis:</h3>
+            <h3><?php echo !empty($regiao) ? 'Arquivos Disponíveis — ' . htmlspecialchars($regiao) : 'Visão Geral — Todas as Regiões'; ?></h3>
             <div class="">
-                <p class="extra"><?php date_default_timezone_set('America/Sao_Paulo');
-                                    echo date("d/m/Y") ?></p>
+                <p class="extra"><?php date_default_timezone_set('America/Sao_Paulo'); echo date("d/m/Y") ?></p>
             </div>
-            </div>
-            <div class="listagem-pesquisa">
-                <input type="text" placeholder="Pesquise os PDFs e Pastas"><button><i class="fas fa-search"></i></button>
-            </div>
+        </div>
+        <?php if (!empty($regiao)): ?>
+        <div class="listagem-pesquisa">
+            <input type="text" placeholder="Pesquise os PDFs e Pastas"><button><i class="fas fa-search"></i></button>
+        </div>
+        <?php endif; ?>
         <div class="listagem-split">
             <?php
-            $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
-
             $colunas = [
                 'normal' => [
                     'titulo' => 'PDFS',
@@ -71,7 +80,9 @@
                     'pasta'  => 'upload_kits',
                 ]
             ];
+
             if (!empty($regiao)) {
+                // == MODO: Visualização de uma região específica ==
                 $base_pcp = __DIR__ . "/documentos/pdfs/{$regiao}/";
 
                 foreach ($colunas as $tipo => $cfg) {
@@ -206,7 +217,54 @@
                     <?php
                 }
             } else {
-                echo '<div class="listagem-vazio-full"><i class="fas fa-map-marker-alt"></i><p>Selecione uma região para visualizar os arquivos.</p></div>';
+                // == MODO: Dashboard Global — Visualiza todas as regiões ==
+                ?>
+                <div class="dashboard-regioes">
+                    <?php foreach ($regioes_validas as $regiao_item):
+                        $base_regiao = __DIR__ . "/documentos/pdfs/{$regiao_item}/";
+                        $total_pdfs = 0;
+                        $total_kits = 0;
+
+                        // Contar PDFs normais
+                        $pasta_normal = $base_regiao . 'upload_normal';
+                        if (is_dir($pasta_normal)) {
+                            foreach (scandir($pasta_normal) as $f) {
+                                if ($f !== '.' && $f !== '..') $total_pdfs++;
+                            }
+                        }
+
+                        // Contar Kits
+                        $pasta_kits = $base_regiao . 'upload_kits';
+                        if (!is_dir($pasta_kits)) $pasta_kits = $base_regiao . 'upload_kit';
+                        if (is_dir($pasta_kits)) {
+                            foreach (scandir($pasta_kits) as $f) {
+                                if ($f !== '.' && $f !== '..') $total_kits++;
+                            }
+                        }
+                        $url_regiao = 'index.php?regiao=' . urlencode($regiao_item);
+                    ?>
+                    <a href="<?php echo $url_regiao; ?>" class="dashboard-card-regiao">
+                        <div class="dashboard-card-header">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h4><?php echo htmlspecialchars($regiao_item); ?></h4>
+                        </div>
+                        <div class="dashboard-card-stats">
+                            <div class="dashboard-stat">
+                                <i class="fas fa-file-alt"></i>
+                                <span><?php echo $total_pdfs; ?> PDF<?php echo $total_pdfs !== 1 ? 's' : ''; ?></span>
+                            </div>
+                            <div class="dashboard-stat">
+                                <i class="fas fa-boxes"></i>
+                                <span><?php echo $total_kits; ?> Kit<?php echo $total_kits !== 1 ? 's' : ''; ?></span>
+                            </div>
+                        </div>
+                        <div class="dashboard-card-footer">
+                            Visualizar <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php
             }
             ?>
         </div>

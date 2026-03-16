@@ -6,16 +6,20 @@ $response = array(
     'mensagem' => ''
 );
 
+// Lista de regiões permitidas — única fonte de verdade
+$regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mirassol', 'Aparecida Taboado'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $tipo_upload = isset($_POST['tipo_upload']) ? $_POST['tipo_upload'] : 'normal';
-    $regiao = isset($_POST['regiao']) ? $_POST['regiao'] : '';
+    $regiao = isset($_POST['regiao']) ? trim($_POST['regiao']) : '';
 
-    if (empty($regiao)) {
-        $response['mensagem'] = 'Região não selecionada.';
+    if (empty($regiao) || !in_array($regiao, $regioes_validas)) {
+        $response['mensagem'] = 'Região inválida ou não permitida.';
         echo json_encode($response);
         exit;
     }
+
 
     $diretorio_base = '../documentos/pdfs/';
 

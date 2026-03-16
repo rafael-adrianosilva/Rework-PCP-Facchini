@@ -18,16 +18,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let tipoUploadAtual = 'normal';
 
     const urlParams = new URLSearchParams(window.location.search);
+    const hasRegiao = urlParams.has('regiao');
     const regiaoUrl = urlParams.get('regiao');
     const regiaoLocal = localStorage.getItem('facchini_pcp_regiao');
 
-    if (regiaoUrl) {
-        localStorage.setItem('facchini_pcp_regiao', regiaoUrl);
-        if (selectedRegionName) {
-            selectedRegionName.textContent = regiaoUrl;
-        }
-        if (inputRegiaoHidden) {
-            inputRegiaoHidden.value = regiaoUrl;
+    if (hasRegiao) {
+        if (regiaoUrl === "") {
+            localStorage.removeItem('facchini_pcp_regiao');
+            if (selectedRegionName) {
+                selectedRegionName.textContent = "Todas as Regiões";
+            }
+            if (inputRegiaoHidden) {
+                inputRegiaoHidden.value = "";
+            }
+        } else {
+            localStorage.setItem('facchini_pcp_regiao', regiaoUrl);
+            if (selectedRegionName) {
+                selectedRegionName.textContent = regiaoUrl;
+            }
+            if (inputRegiaoHidden) {
+                inputRegiaoHidden.value = regiaoUrl;
+            }
         }
     } else if (regiaoLocal) {
         const url = new URL(window.location.href);
