@@ -72,7 +72,7 @@
                 ]
             ];
             if (!empty($regiao)) {
-                $base_pcp = dirname(__DIR__) . "/pcp/documentos/pdfs/{$regiao}/";
+                $base_pcp = __DIR__ . "/documentos/pdfs/{$regiao}/";
 
                 foreach ($colunas as $tipo => $cfg) {
                     $caminho = $base_pcp . $cfg['pasta'];

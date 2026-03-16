@@ -122,22 +122,22 @@ else {
                 <label for="selectPastaKit">Selecione o Kit de Destino:</label>
                 <div class="agrupamento-select-kit">
                     <select id="selectPastaKit" class="select-kit">
-                        <option value="">-- Selecione ou Crie um Kit --</option>
+                        <option value="">Selecione ou Crie um Kit</option>
                         <?php
-                        $reg = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
-                        if (!empty($reg)) {
-                            $b_pcp = dirname(__DIR__, 2);
-                            $cKits = $b_pcp . "/documentos/pdfs/{$reg}/upload_kits";
-                            if (is_dir($cKits)) {
-                                $pKits = scandir($cKits);
-                                foreach ($pKits as $pkt) {
-                                    if ($pkt !== '.' && $pkt !== '..' && is_dir($cKits . '/' . $pkt)) {
-                                        echo '<option value="' . htmlspecialchars($pkt) . '">' . htmlspecialchars($pkt) . '</option>';
-                                    }
-                                }
-                            }
-                        }
-                        ?>
+$reg = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
+if (!empty($reg)) {
+    $b_pcp = dirname(__DIR__, 2);
+    $cKits = $b_pcp . "/documentos/pdfs/{$reg}/upload_kits";
+    if (is_dir($cKits)) {
+        $pKits = scandir($cKits);
+        foreach ($pKits as $pkt) {
+            if ($pkt !== '.' && $pkt !== '..' && is_dir($cKits . '/' . $pkt)) {
+                echo '<option value="' . htmlspecialchars($pkt) . '">' . htmlspecialchars($pkt) . '</option>';
+            }
+        }
+    }
+}
+?>
                     </select>
                     <button type="button" title="Criar Novo Kit" onclick="showModal('criarKitModal')" class="btn-criar-kit"><i class="fas fa-folder-plus"></i></button>
                     <button type="button" title="Excluir Kit Selecionado" id="btnExcluirKit" class="btn-excluir-kit"><i class="fas fa-trash-alt"></i></button>
@@ -227,6 +227,25 @@ else {
             <p id="error-msg" style="font-size: var(--text-sm);">
                 Ocorreu um erro ao processar a solicitação.
             </p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmação -->
+<div class="modal-fundo" id="confirmacao" style="display: none;">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>CONFIRMAR AÇÃO</h2>
+            <button type="button" onclick="closeModal('confirmacao')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p id="confirmacao-msg" style="padding: 10px 0; color: var(--corTxt3);">
+                Você tem certeza que deseja realizar esta ação?
+            </p>
+        </div>
+        <div class="modal-footer" style="margin-top: 15px; gap: 10px; display: flex; justify-content: space-between;">
+            <button type="button" class="btn-modelo inactive-tab" onclick="closeModal('confirmacao')" style="flex: 1; padding: 12px; border-radius: 8px;">CANCELAR</button>
+            <button type="button" id="confirmar-btn-sim" class="btn-modelo active-tab" style="flex: 1; padding: 12px; border-radius: 8px;">SIM, CONTINUAR</button>
         </div>
     </div>
 </div>

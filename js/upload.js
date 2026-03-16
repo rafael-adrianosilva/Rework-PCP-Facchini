@@ -104,15 +104,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLimparTudo.addEventListener('click', () => {
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
         if (listaAtual.length > 0) {
-            const confirmacao = confirm(`Tem certeza que deseja limpar todos os arquivos da aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'}?`);
-            if (confirmacao) {
+            exibirConfirmacao(`Tem certeza que deseja limpar todos os arquivos da aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'}?`, () => {
                 if (tipoUploadAtual === 'normal') {
                     arquivosNormal = [];
                 } else {
                     arquivosKit = [];
                 }
                 atualizarLista();
-            }
+            });
         }
     });
 
@@ -457,45 +456,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!nomeKit) return; // Segurança caso o select não tenha valor real
 
-            const confirmacao = confirm(`Tem certeza que deseja EXCLUIR o kit "${nomeKit}" e TODOS os seus arquivos? Esta ação não pode ser desfeita.`);
-            if (!confirmacao) return;
+            exibirConfirmacao(`Tem certeza que deseja EXCLUIR o kit "${nomeKit}" e TODOS os seus arquivos? Esta ação não pode ser desfeita.`, () => {
+                const formDataExcluirKit = new FormData();
+                formDataExcluirKit.append('nome_pasta', nomeKit);
+                formDataExcluirKit.append('regiao', regiao);
 
-            const formDataExcluirKit = new FormData();
-            formDataExcluirKit.append('nome_pasta', nomeKit);
-            formDataExcluirKit.append('regiao', regiao);
+                const textoOriginalE = btnExcluirKit.innerHTML;
+                btnExcluirKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btnExcluirKit.disabled = true;
 
-            const textoOriginalE = btnExcluirKit.innerHTML;
-            btnExcluirKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            btnExcluirKit.disabled = true;
-
-            fetch('php/actions/excluir_pasta_kit.php', {
-                method: 'POST',
-                body: formDataExcluirKit
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.sucesso) {
-                    exibirSucesso(data.mensagem);
-                    // Remove do dropdown
-                    Array.from(selectPastaKit.options).forEach(opt => {
-                        if (opt.value === nomeKit) {
-                            opt.remove();
-                        }
-                    });
-                    // Oculta botao
-                    btnExcluirKit.style.display = 'none';
-                    selectPastaKit.value = '';
-                } else {
-                    exibirErro('Erro: ' + data.mensagem);
-                }
-            })
-            .catch(err => {
-                console.error('Erro ao excluir kit:', err);
-                exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
-            })
-            .finally(() => {
-                btnExcluirKit.innerHTML = textoOriginalE;
-                btnExcluirKit.disabled = false;
+                fetch('php/actions/excluir_pasta_kit.php', {
+                    method: 'POST',
+                    body: formDataExcluirKit
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        exibirSucesso(data.mensagem);
+                        // Remove do dropdown
+                        Array.from(selectPastaKit.options).forEach(opt => {
+                            if (opt.value === nomeKit) {
+                                opt.remove();
+                            }
+                        });
+                        // Oculta botao
+                        btnExcluirKit.style.display = 'none';
+                        selectPastaKit.value = '';
+                    } else {
+                        exibirErro('Erro: ' + data.mensagem);
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao excluir kit:', err);
+                    exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
+                })
+                .finally(() => {
+                    btnExcluirKit.innerHTML = textoOriginalE;
+                    btnExcluirKit.disabled = false;
+                });
             });
         });
     }

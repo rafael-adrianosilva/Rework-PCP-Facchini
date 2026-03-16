@@ -67,6 +67,27 @@ function exibirErro(mensagem) {
     }
 }
 
+// Função para exibir confirmação via Modal
+function exibirConfirmacao(mensagem, callback) {
+    const msgElem = document.getElementById('confirmacao-msg');
+    const btnSim = document.getElementById('confirmar-btn-sim');
+
+    if (msgElem && btnSim) {
+        msgElem.innerText = mensagem;
+        
+        // Remove listeners antigos para não acumular
+        const novoBtnSim = btnSim.cloneNode(true);
+        btnSim.parentNode.replaceChild(novoBtnSim, btnSim);
+        
+        novoBtnSim.addEventListener('click', () => {
+            closeModal('confirmacao');
+            if (typeof callback === 'function') callback();
+        });
+        
+        showModal('confirmacao');
+    }
+}
+
 //Função para mudar o tipo de upload (tem que finalizar @Gideão)
 function trocarUploadModal(tipo) {
     const btnUpNormal = document.getElementById('btnUpNormal');
@@ -169,3 +190,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function excluirItem(caminho) {
+    exibirConfirmacao("Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.", () => {
+        const formData = new FormData();
+        formData.append('caminho', caminho);
+
+        fetch('php/actions/excluir_item.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.sucesso) {
+                exibirSucesso(data.mensagem);
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                exibirErro(data.mensagem);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            exibirErro("Erro ao excluir o item.");
+        });
+    });
+}
+
+function limparColuna(regiao, tipo) {
+    const nomeTipo = tipo === 'upload_normal' ? 'PDFs' : 'Kits';
+    exibirConfirmacao(`ATENÇÃO: Você está prestes a apagar TODOS os ${nomeTipo} da região ${regiao}.\nDeseja continuar?`, () => {
+        const formData = new FormData();
+        formData.append('regiao', regiao);
+        formData.append('tipo', tipo);
+
+        fetch('php/actions/limpar_coluna.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.sucesso) {
+                exibirSucesso(data.mensagem);
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                exibirErro(data.mensagem);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            exibirErro("Erro ao limpar a coluna.");
+        });
+    });
+}

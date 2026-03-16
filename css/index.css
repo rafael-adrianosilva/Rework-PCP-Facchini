@@ -129,8 +129,8 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    padding: 5px;
+    justify-content: space-between;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid var(--corBordas);
     box-shadow: var(--sombra);
@@ -138,10 +138,10 @@
 }
 
 .listagem-pesquisa button {
-    padding: 10px;
+    padding: 7px;
     border-radius: 10px;
     border: none;
-    background: var(--corAzul);
+    background: none;
     cursor: pointer;
     transition: 0.3s all ease-in-out;
     font-size: var(--text-2xl);
@@ -154,7 +154,7 @@
 }
 
 .listagem-pesquisa input {
-    width: 90%;
+    width: 100%;
     padding: 15px;
     border: none;
     border-bottom: 1px solid var(--corBordas);
@@ -211,6 +211,13 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    width: 100%;
+}
+
+.coluna-info div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .coluna-info h4 {
@@ -322,6 +329,48 @@ a.arquivo-card-nome:hover {
     text-decoration: none;
     transition: all 0.25s ease;
     cursor: pointer;
+
+    &:hover {
+        background: var(--corBase);
+        color: var(--txtClaro);
+        border-color: var(--corBase);
+    }
+}
+
+.btn-excluir-item {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--corBordas);
+    background: var(--corFundo);
+    color: var(--corTxt3);
+    font-size: 13px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--corBase);
+        color: var(--txtClaro);
+        border-color: var(--corBase);
+    }
+}
+
+.btn-limpar-coluna {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--corBordas);
+    background: var(--corFundo);
+    color: var(--corTxt3);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.25s ease;
 
     &:hover {
         background: var(--corBase);

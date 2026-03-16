@@ -421,28 +421,28 @@
 
 .area-selecao-kit {
     display: none;
-    flex-direction: column; 
-    gap: 8px; 
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 15px;
 }
 
 .area-selecao-kit label {
-    color: var(--corTxt3); 
-    font-weight: bold; 
+    color: var(--corTxt3);
+    font-weight: bold;
     font-size: 14px;
 }
 
 .agrupamento-select-kit {
-    display: flex; 
+    display: flex;
     gap: 10px;
 }
 
 .select-kit {
-    flex: 1; 
-    padding: 10px; 
-    border-radius: 5px; 
-    border: 1px solid var(--corBordas); 
-    background: var(--corFundo); 
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--corBordas);
+    background: var(--corFundo);
     color: var(--corTxt3);
     outline: none;
     cursor: pointer;
@@ -452,40 +452,32 @@
     border-color: var(--corBase);
 }
 
-.btn-criar-kit, .btn-excluir-kit {
-    padding: 10px 15px; 
-    border-radius: 5px; 
-    border: none; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    transition: 0.3s; 
-    box-shadow: var(--sombra);
+.btn-criar-kit,
+.btn-excluir-kit {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    border: 1px solid var(--corBordas);
+    background: var(--corBase);
+    color: var(--txtClaro);
+
+    &:hover {
+        background: var(--corDestaque);
+    }
 }
 
 .btn-criar-kit {
-    background: var(--corFundo);
-    color: var(--corVermelho);
-    border: 1px solid var(--corBordas);
-}
+    background: var(--corAzul);
 
-.btn-criar-kit i {
-    color: var(--corVermelho);
-}
-
-.btn-criar-kit:hover {
-    filter: brightness(0.9);
-}
-
-.btn-excluir-kit {
-    background: var(--corVermelho);
-    color: var(--corTxt1); 
-    display: none;
-}
-
-.btn-excluir-kit:hover {
-    filter: brightness(0.9);
+    &:hover {
+        background: var(--txtClaro);
+        color: var(--corAzul);
+    }
 }
 
 .enviados-section {

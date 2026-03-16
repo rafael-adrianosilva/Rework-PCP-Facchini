@@ -73,7 +73,7 @@
             ];
 
             if (!empty($regiao)) {
-                $base_pcp = dirname(__DIR__) . "/pcp/documentos/pdfs/{$regiao}/";
+                $base_pcp = __DIR__ . "/documentos/pdfs/{$regiao}/";
 
                 foreach ($colunas as $tipo => $cfg) {
                     $caminho = $base_pcp . $cfg['pasta'];
@@ -88,16 +88,23 @@
                             </div>
                             <div class="coluna-info">
                                 <h4><?php echo $cfg['titulo']; ?></h4>
-                                <span class="coluna-badge"><?php
-                                    $count = 0;
-                                    if (is_dir($caminho)) {
-                                        $items = scandir($caminho);
-                                        foreach ($items as $it) {
-                                            if ($it !== '.' && $it !== '..') $count++;
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span class="coluna-badge"><?php
+                                        $count = 0;
+                                        if (is_dir($caminho)) {
+                                            $items = scandir($caminho);
+                                            foreach ($items as $it) {
+                                                if ($it !== '.' && $it !== '..') $count++;
+                                            }
                                         }
-                                    }
-                                    echo $count . ' ' . ($count === 1 ? 'item' : 'itens');
-                                ?></span>
+                                        echo $count . ' ' . ($count === 1 ? 'item' : 'itens');
+                                    ?></span>
+                                    <?php if ($count > 0): ?>
+                                        <button class="btn-limpar-coluna" onclick="limparColuna('<?php echo $regiao; ?>', '<?php echo $cfg['pasta']; ?>')" title="Apagar todos os <?php echo $cfg['titulo']; ?>">
+                                            Apagar Tudo <i class="fas fa-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                         <div class="upload-coluna-body">
@@ -132,6 +139,9 @@
                                                 </div>
                                             </div>
                                             <div class="arquivo-card-right">
+                                                <button class="btn-excluir-item" onclick="event.stopPropagation(); excluirItem('<?php echo $caminho_relativo; ?>')" title="Excluir Pasta">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                                 <i class="fas fa-chevron-down pasta-chevron" id="chevron_<?php echo $pasta_id; ?>"></i>
                                             </div>
                                         </div>
@@ -161,6 +171,9 @@
                                                         <a href="<?php echo $sub_caminho; ?>" download="<?php echo htmlspecialchars($sub_arq); ?>" class="btn-download" title="Baixar">
                                                             <i class="fas fa-download"></i>
                                                         </a>
+                                                        <button class="btn-excluir-item" onclick="excluirItem('<?php echo $sub_caminho; ?>')" title="Excluir Arquivo">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             <?php } ?>
@@ -187,6 +200,9 @@
                                                 <a href="<?php echo $caminho_relativo; ?>" download="<?php echo htmlspecialchars($arquivo); ?>" class="btn-download" title="Baixar">
                                                     <i class="fas fa-download"></i>
                                                 </a>
+                                                <button class="btn-excluir-item" onclick="excluirItem('<?php echo $caminho_relativo; ?>')" title="Excluir Arquivo">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
                                             </div>
                                         </div>
                                         <?php
