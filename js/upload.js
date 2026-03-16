@@ -1,41 +1,79 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Referências dos elementos principais referenciados no HTML
     const inputFile = document.getElementById('arquivo');
+    const inputKitPdf = document.getElementById('arquivo_kit_pdf');
     const previewContainer = document.getElementById('preview-arquivos-curso');
     const btnLimparTudo = document.querySelector('.enviados-titulo button');
-    const uploadLabel = document.querySelector('.upload-label');
+    const uploadLabel = document.getElementById('uploadLabelArea');
     const btnEnviarArquivos = document.getElementById('btnEnviarArquivos');
+    const inputRegiaoHidden = document.getElementById('regiao_selecionada');
+    const btnRegionDropdown = document.getElementById('btn-region');
+    const regionDropdown = document.getElementById('region-dropdown');
+    const selectedRegionName = document.getElementById('selected-region-name');
+    const btnSelecionarPrincipal = document.getElementById('btnSelecionarPrincipal');
+    const btnSelecionarKitPdf = document.getElementById('btnSelecionarKitPdf');
 
-    // Arrays que armazenarão os arquivos PDF separados por tipo
     let arquivosNormal = [];
     let arquivosKit = [];
 
-    // Controle de estado atual (começa no normal)
     let tipoUploadAtual = 'normal';
 
-    // Inicializa a interface
+    const valRegiao = inputRegiaoHidden ? inputRegiaoHidden.value : '';
+
+    if (valRegiao) {
+        localStorage.setItem('facchini_pcp_regiao', valRegiao);
+        if (selectedRegionName) selectedRegionName.textContent = valRegiao;
+    } else {
+        localStorage.removeItem('facchini_pcp_regiao');
+        if (selectedRegionName) selectedRegionName.textContent = "Sistema PCP";
+    }
+
     atualizarLista();
 
-    // Evento de seleção de arquivos utilizando o botão/modal padrão do navegador
     inputFile.addEventListener('change', (e) => {
         adicionarArquivos(Array.from(e.target.files));
-        // Resetar o input para permitir selecionar o mesmo arquivo novamente se deletado
         inputFile.value = '';
     });
 
+    // Listener para o input de PDFs avulsos no modo Kit
+    if (inputKitPdf) {
+        inputKitPdf.addEventListener('change', (e) => {
+            adicionarArquivos(Array.from(e.target.files));
+            inputKitPdf.value = '';
+        });
+    }
 
-    // -------------------------------------------------------------
-    // Drag & Drop: Eventos para soltar arquivos diretamente na tela
-    // -------------------------------------------------------------
+    // Gerenciador de cliques para os botões e área de upload
+    if (btnSelecionarPrincipal) {
+        btnSelecionarPrincipal.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (inputFile) inputFile.click();
+        });
+    }
+
+    if (btnSelecionarKitPdf) {
+        btnSelecionarKitPdf.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (inputKitPdf) inputKitPdf.click();
+        });
+    }
+
+    if (uploadLabel) {
+        uploadLabel.addEventListener('click', (e) => {
+            // Se clicar na área do card (fora dos botões), aciona o seletor principal
+            if (inputFile) inputFile.click();
+        });
+    }
+
+
     uploadLabel.addEventListener('dragover', (e) => {
         e.preventDefault();
-        uploadLabel.style.borderColor = '#007bff'; // Estilo de destaque
+        uploadLabel.style.borderColor = '#007bff';
         uploadLabel.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
     });
 
     uploadLabel.addEventListener('dragleave', (e) => {
         e.preventDefault();
-        uploadLabel.style.borderColor = ''; // Remove o destaque
+        uploadLabel.style.borderColor = '';
         uploadLabel.style.backgroundColor = '';
     });
 
@@ -53,35 +91,58 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLimparTudo.addEventListener('click', () => {
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
         if (listaAtual.length > 0) {
-            const confirmacao = confirm(`Tem certeza que deseja limpar todos os arquivos da aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'}?`);
-            if (confirmacao) {
+            exibirConfirmacao(`Tem certeza que deseja limpar todos os arquivos da aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'}?`, () => {
                 if (tipoUploadAtual === 'normal') {
                     arquivosNormal = [];
                 } else {
                     arquivosKit = [];
                 }
                 atualizarLista();
-            }
+            });
         }
     });
 
-    // Envio dos arquivos para o backend
     btnEnviarArquivos.addEventListener('click', () => {
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         if (listaAtual.length === 0) {
-            alert(`Nenhum arquivo na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} para enviar.`);
+            exibirErro(`Nenhum arquivo na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} para enviar.`);
             return;
         }
 
         const formData = new FormData();
         formData.append('tipo_upload', tipoUploadAtual);
+        formData.append('regiao', inputRegiaoHidden.value);
+
+        if (!inputRegiaoHidden.value) {
+            exibirErro('Por favor, selecione uma região na barra de navegação antes de enviar.');
+            return;
+        }
+
+        let pastaKit = '';
+        if (tipoUploadAtual === 'kit') {
+            const selectPastaKit = document.getElementById('selectPastaKit');
+            pastaKit = selectPastaKit ? selectPastaKit.value : '';
+            if (!pastaKit) {
+                exibirErro('Por favor, selecione ou crie um Kit de Destino antes de enviar.');
+                return;
+            }
+        }
 
         listaAtual.forEach((file) => {
             formData.append('arquivos[]', file);
+            // Enviar caminho relativo para preservar estrutura de pastas em kits ou colocar na pasta certa do kit
+            if (tipoUploadAtual === 'kit') {
+                if (file.webkitRelativePath) {
+                    formData.append('caminhos[]', pastaKit + '/' + file.webkitRelativePath);
+                } else {
+                    formData.append('caminhos[]', pastaKit + '/' + file.name);
+                }
+            } else {
+                formData.append('caminhos[]', file.name);
+            }
         });
 
-        // Modificando texto do botão para indicar carregamento
         const textoOriginal = btnEnviarArquivos.innerHTML;
         btnEnviarArquivos.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Enviando...';
         btnEnviarArquivos.disabled = true;
@@ -93,74 +154,51 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.sucesso) {
-                    alert(data.mensagem);
-                    
-                    // Mostra os arquivos recém-enviados na index
-                    adicionarArquivosRecentesNaTela(listaAtual, tipoUploadAtual);
+                    exibirSucesso(data.mensagem);
 
-                    // Limpa a lista atual após envio
                     if (tipoUploadAtual === 'normal') {
                         arquivosNormal = [];
                     } else {
                         arquivosKit = [];
                     }
                     atualizarLista();
+                    // Recarregar página para atualizar a listagem de arquivos
+                    setTimeout(() => window.location.reload(), 1000);
                 } else {
-                    alert('Erro: ' + data.mensagem);
+                    exibirErro('Erro: ' + data.mensagem);
                 }
             })
             .catch(error => {
                 console.error('Erro no envio:', error);
-                alert('Ocorreu um erro ao enviar os arquivos.');
+                exibirErro('Ocorreu um erro ao enviar os arquivos.');
             })
             .finally(() => {
-                // Restaura o botão
+
                 btnEnviarArquivos.innerHTML = textoOriginal;
                 btnEnviarArquivos.disabled = false;
             });
     });
 
-    // Função que avalia e adiciona arquivos novos ao array atual (evita duplicatas e arquivos inválidos)
-    async function adicionarArquivos(novosArquivos) {
+    function adicionarArquivos(novosArquivos) {
         let adicionouAlgo = false;
         let arrayAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         for (let file of novosArquivos) {
-            // Regra: ser PDF e possuir no máximo 5MB
             if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
                 if (file.size <= 5 * 1024 * 1024) {
-                    const jaExisteNaLista = arrayAtual.some(f => f.name === file.name);
-                    if (!jaExisteNaLista) {
-                        try {
-                            const formData = new FormData();
-                            formData.append('filename', file.name);
-                            formData.append('tipo_upload', tipoUploadAtual);
-
-                            const response = await fetch('php/check_file.php', {
-                                method: 'POST',
-                                body: formData
-                            });
-
-                            const data = await response.json();
-
-                            if (data.existe) {
-                                alert(`O arquivo "${file.name}" já foi enviado para o servidor na aba ${tipoUploadAtual === 'normal' ? 'Upload Normal' : 'Upload de Kits'} e não pode ser reenviado.`);
-                            } else {
-                                arrayAtual.push(file);
-                                adicionouAlgo = true;
-                            }
-                        } catch (error) {
-                            console.error('Erro na checagem do arquivo:', error);
-                            alert(`Falha ao checar o arquivo "${file.name}". Tente novamente.`);
-                        }
+                    // Se já existe na lista, substitui
+                    const indexExistente = arrayAtual.findIndex(f => f.name === file.name);
+                    if (indexExistente !== -1) {
+                        arrayAtual[indexExistente] = file;
                     } else {
-                        alert(`O arquivo "${file.name}" já está na lista atual.`);
+                        arrayAtual.push(file);
                     }
+                    adicionouAlgo = true;
                 } else {
-                    alert(`O arquivo "${file.name}" excede o tamanho máximo de 5MB.`);
+                    exibirErro(`O arquivo "${file.name}" excede o tamanho máximo de 5MB.`);
                 }
             } else {
-                alert(`O arquivo "${file.name}" não é um PDF válido.`);
+                exibirErro(`O arquivo "${file.name}" não é um PDF válido.`);
             }
         }
 
@@ -169,19 +207,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Função responsável por renderizar o HTML da lista de arquivos com base na aba selecionada
     function atualizarLista() {
         previewContainer.innerHTML = '';
         const listaAtual = tipoUploadAtual === 'normal' ? arquivosNormal : arquivosKit;
 
         if (listaAtual.length === 0) {
-            previewContainer.innerHTML = '<p style="text-align: center; color: #777; padding: 20px; width: 100%;">Nenhum PDF selecionado nesta aba.</p>';
+            previewContainer.innerHTML = '<p style="text-align: center; color: var(--corTxt3); padding: 20px; width: 100%;">Nenhum PDF selecionado nesta aba.</p>';
             previewContainer.style.overflowY = 'visible';
             previewContainer.style.maxHeight = 'auto';
             return;
         }
 
-        // Aplicação do Scroll para muitos arquivos
         previewContainer.style.maxHeight = '280px';
         previewContainer.style.overflowY = 'auto';
         previewContainer.style.overflowX = 'hidden';
@@ -190,32 +226,30 @@ document.addEventListener('DOMContentLoaded', () => {
             const item = document.createElement('div');
             item.className = 'arquivo-item';
 
-            // Adicionado formatação flex no arquivo-item garantindo o visual
             item.style.display = 'flex';
             item.style.justifyContent = 'space-between';
             item.style.alignItems = 'center';
             item.style.padding = '12px';
             item.style.marginBottom = '8px';
-            item.style.border = '1px solid #e1e1e1';
+            item.style.border = '1px solid var(--corBordas)';
             item.style.borderRadius = '5px';
-            item.style.backgroundColor = '#fafafa';
+            item.style.backgroundColor = 'var(--corFundo)';
 
-            // Formatação do tamanho
             const fileSizeInfo = (file.size / 1024 / 1024).toFixed(2);
             const sizeText = fileSizeInfo < 1 ? (file.size / 1024).toFixed(2) + ' KB' : fileSizeInfo + ' MB';
 
             item.innerHTML = `
                 <div class="arquivo-info" style="display: flex; align-items: center; gap: 12px; max-width: 85%;">
-                    <div class="icon-bg" style="color: #d93025; font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background-color: rgba(217, 48, 37, 0.1); border-radius: 5px;">
+                    <div class="icon-bg" style="color: var(--corBase); font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background-color: rgba(var(--corTxt1), 0.1); border-radius: 5px;">
                         <i class="fas fa-file-pdf"></i>
                     </div>
                     <div class="arquivo-textos" style="display: flex; flex-direction: column; overflow: hidden;">
-                        <strong title="${file.name}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 14px; color: #333;">${file.name}</strong>
-                        <span style="font-size: 12px; color: #777; margin-top: 2px;">${sizeText}</span>
+                        <strong title="${file.name}" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: 14px; color: var(--corTxt3);">${file.name}</strong>
+                        <span style="font-size: 12px; color: var(--corTxt3); margin-top: 2px;">${sizeText}</span>
                     </div>
                 </div>
                 <div class="arquivo-actions">
-                    <button type="button" class="remover-arquivo" data-index="${index}" style="background: none; border: none; color: #d93025; cursor: pointer; font-size: 16px; transition: 0.2s;" title="Remover Arquivo">
+                    <button type="button" class="remover-arquivo" data-index="${index}" style="background: none; border: none; color: var(--corTxt3); cursor: pointer; font-size: 16px; transition: 0.2s;" title="Remover Arquivo">
                         <i class="far fa-trash-alt"></i>
                     </button>
                 </div>
@@ -224,20 +258,17 @@ document.addEventListener('DOMContentLoaded', () => {
             previewContainer.appendChild(item);
         });
 
-        // Habilita as lixeiras de exclusão individual
         const botoesRemover = previewContainer.querySelectorAll('.remover-arquivo');
         botoesRemover.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const index = e.currentTarget.getAttribute('data-index');
                 removerArquivo(index);
             });
-            // Efeito de hover via JS apenas para dar um toque extra
             btn.addEventListener('mouseenter', (e) => e.target.style.color = '#ff0000');
             btn.addEventListener('mouseleave', (e) => e.target.style.color = '#d93025');
         });
     }
 
-    // Função para deletar um único registro do array atual
     function removerArquivo(index) {
         if (tipoUploadAtual === 'normal') {
             arquivosNormal.splice(index, 1);
@@ -247,125 +278,211 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarLista();
     }
 
-    // Controle de abas "Upload Normal" e "Upload de Kits" internalizado
     window.trocarUploadModal = function (tipo) {
-        tipoUploadAtual = tipo; // Atualiza a variável de estado
+        tipoUploadAtual = tipo;
 
         const btnNormal = document.getElementById('btnUpNormal');
         const btnKit = document.getElementById('btnUpKit');
+        const inputFile = document.getElementById('arquivo');
+        const areaSelecaoKit = document.getElementById('areaSelecaoKit');
 
         if (tipo === 'normal') {
             if (btnNormal) {
                 btnNormal.classList.add('active-tab');
                 btnNormal.classList.remove('inactive-tab');
+                document.getElementById("tipo_up").innerText = " Normal";
             }
             if (btnKit) {
                 btnKit.classList.add('inactive-tab');
                 btnKit.classList.remove('active-tab');
             }
+            if (areaSelecaoKit) {
+                areaSelecaoKit.style.display = 'none';
+            }
+            // Para upload normal, desativa seleção de pasta
+            if (inputFile) {
+                inputFile.removeAttribute('webkitdirectory');
+                inputFile.removeAttribute('directory');
+                inputFile.setAttribute('multiple', '');
+            }
+            // Mostrar apenas botão principal com texto padrão
+            if (btnSelecionarPrincipal) {
+                btnSelecionarPrincipal.textContent = 'Selecionar Arquivos';
+                btnSelecionarPrincipal.style.display = '';
+            }
+            if (btnSelecionarKitPdf) {
+                btnSelecionarKitPdf.style.display = 'none';
+            }
         } else {
             if (btnKit) {
                 btnKit.classList.add('active-tab');
                 btnKit.classList.remove('inactive-tab');
+                document.getElementById("tipo_up").innerText = " de Kits";
             }
             if (btnNormal) {
                 btnNormal.classList.add('inactive-tab');
                 btnNormal.classList.remove('active-tab');
             }
+            if (areaSelecaoKit) {
+                areaSelecaoKit.style.display = 'flex';
+            }
+            // Para upload de kits, ativa seleção de pasta no input principal
+            if (inputFile) {
+                inputFile.setAttribute('webkitdirectory', '');
+                inputFile.setAttribute('directory', '');
+                inputFile.setAttribute('multiple', '');
+            }
+            // Mostrar dois botões: pasta e PDF avulso
+            if (btnSelecionarPrincipal) {
+                btnSelecionarPrincipal.textContent = 'Selecionar Pasta';
+                btnSelecionarPrincipal.style.display = '';
+            }
+            if (btnSelecionarKitPdf) {
+                btnSelecionarKitPdf.style.display = '';
+            }
         }
-        // Atualiza a visualização da lista conforme a nova aba
         atualizarLista();
     };
 
-    // Função que insere visualmente os arquivos confirmados no container da página
-    function adicionarArquivosRecentesNaTela(arquivos, tipo) {
-        const containerRecentes = document.getElementById('container-recentes');
-        if (!containerRecentes) return;
-
-        arquivos.forEach(file => {
-            const dataAtual = new Date();
-            const horas = String(dataAtual.getHours()).padStart(2, '0');
-            const minutos = String(dataAtual.getMinutes()).padStart(2, '0');
-            const dataFormatada = dataAtual.toLocaleDateString('pt-BR') + ' às ' + horas + ':' + minutos;
-            
-            const item = document.createElement('div');
-            item.className = 'recente-item animated-entry';
-            item.style.display = 'flex';
-            item.style.justifyContent = 'space-between';
-            item.style.alignItems = 'center';
-            item.style.padding = '15px 25px';
-            item.style.backgroundColor = '#ffffff';
-            item.style.border = '1px solid #e1e1e1';
-            item.style.borderRadius = '8px';
-            item.style.boxShadow = '0 3px 8px rgba(0,0,0,0.04)';
-            item.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
-            
-            const fileSizeInfo = (file.size / 1024 / 1024).toFixed(2);
-            const sizeText = fileSizeInfo < 1 ? (file.size / 1024).toFixed(2) + ' KB' : fileSizeInfo + ' MB';
-            const badgeCustom = tipo === 'kit' 
-                ? '<span style="background-color: #ff9800; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 12px; letter-spacing: 0.5px;">KIT</span>' 
-                : '<span style="background-color: #007bff; color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 12px; letter-spacing: 0.5px;">NORMAL</span>';
-
-            item.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 18px; max-width: 75%;">
-                    <div style="color: #d93025; font-size: 28px; background: rgba(217,48,37,0.1); width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <div style="display: flex; flex-direction: column; overflow: hidden;">
-                        <div style="display: flex; align-items: center; margin-bottom: 4px;">
-                            <strong style="color: #333; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${file.name}</strong>
-                            ${badgeCustom}
-                        </div>
-                        <div style="color: #777; font-size: 13px; display: flex; gap: 8px;">
-                            <span><i class="fas fa-weight-hanging" style="font-size: 11px; margin-right: 4px;"></i>${sizeText}</span> • 
-                            <span><i class="far fa-clock" style="font-size: 11px; margin-right: 4px;"></i>Enviado em ${dataFormatada}</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <span style="background-color: #e8f5e9; color: #2e7d32; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; display: flex; align-items: center;">
-                        <i class="fas fa-check-circle" style="margin-right: 6px;"></i> Concluído
-                    </span>
-                    <button onclick="alert('Funcionalidade de detalhar futuramente!')" style="background: none; border: 1px solid #ddd; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: #555; font-weight: 600; font-size: 13px; transition: 0.2s;">
-                        Detalhes
-                    </button>
-                </div>
-            `;
-            
-            // Efeito visual no hover para os itens novos
-            item.addEventListener('mouseenter', () => {
-                item.style.transform = 'translateY(-2px)';
-                item.style.boxShadow = '0 5px 15px rgba(0,0,0,0.08)';
-            });
-            item.addEventListener('mouseleave', () => {
-                item.style.transform = 'translateY(0)';
-                item.style.boxShadow = '0 3px 8px rgba(0,0,0,0.04)';
-            });
-            
-            // Adiciona no topo da lista
-            containerRecentes.insertBefore(item, containerRecentes.firstChild);
+    if (btnRegionDropdown) {
+        btnRegionDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+            regionDropdown.classList.toggle('active');
         });
-        
-        // Exibe feedback temporário na section message
-        const messageDesc = document.querySelector('.message p');
-        if (messageDesc) {
-            const originalText = messageDesc.textContent;
-            messageDesc.textContent = "Novos arquivos adicionados recentemente!";
-            messageDesc.style.color = "#28a745";
-            messageDesc.style.fontWeight = "bold";
-            setTimeout(() => {
-                messageDesc.textContent = originalText;
-                messageDesc.style.color = "";
-                messageDesc.style.fontWeight = "";
-            }, 3000);
-        }
+    }
+
+    document.addEventListener('click', () => {
+        if (regionDropdown) regionDropdown.classList.remove('active');
+    });
+
+    const regionOptions = document.querySelectorAll('.region-option');
+    regionOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const regiao = option.getAttribute('data-region');
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('regiao', regiao);
+            window.location.href = url.toString();
+        });
+    });
+
+    // Lógica para criar Nova Pasta (Kit)
+    const btnSalvarNovoKit = document.getElementById('btnSalvarNovoKit');
+    if (btnSalvarNovoKit) {
+        btnSalvarNovoKit.addEventListener('click', () => {
+            const nomeKitElem = document.getElementById('nomeNovaPastaKit');
+            const nomeKit = nomeKitElem ? nomeKitElem.value.trim() : '';
+            const regiao = inputRegiaoHidden ? inputRegiaoHidden.value : '';
+
+            if (!nomeKit) {
+                exibirErro('Digite o nome do Kit.');
+                return;
+            }
+            if (!regiao) {
+                exibirErro('Região não selecionada.');
+                return;
+            }
+
+            const formDataKit = new FormData();
+            formDataKit.append('nome_pasta', nomeKit);
+            formDataKit.append('regiao', regiao);
+
+            const textoOriginal = btnSalvarNovoKit.innerHTML;
+            btnSalvarNovoKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando...';
+            btnSalvarNovoKit.disabled = true;
+
+            fetch('php/actions/criar_pasta_kit.php', {
+                method: 'POST',
+                body: formDataKit
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    closeModal('criarKitModal');
+                    const selectPastaKit = document.getElementById('selectPastaKit');
+                    if (selectPastaKit) {
+                        const option = document.createElement('option');
+                        option.value = data.nome_pasta;
+                        option.textContent = data.nome_pasta;
+                        selectPastaKit.appendChild(option);
+                        selectPastaKit.value = data.nome_pasta; // já seleciona o criado
+                    }
+                    if (nomeKitElem) nomeKitElem.value = '';
+                    exibirSucesso(data.mensagem);
+                } else {
+                    exibirErro('Erro: ' + data.mensagem);
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao criar kit:', err);
+                exibirErro('Ocorreu um erro ao criar o Kit.');
+            })
+            .finally(() => {
+                btnSalvarNovoKit.innerHTML = textoOriginal;
+                btnSalvarNovoKit.disabled = false;
+            });
+        });
+    }
+
+    // Lógica para mostrar/esconder botão de exclusão de acordo com o select e Lógica de exclusão do Kit
+    const selectPastaKit = document.getElementById('selectPastaKit');
+    const btnExcluirKit = document.getElementById('btnExcluirKit');
+
+    if (selectPastaKit && btnExcluirKit) {
+        selectPastaKit.addEventListener('change', () => {
+            if (selectPastaKit.value !== "") {
+                btnExcluirKit.style.display = 'flex';
+            } else {
+                btnExcluirKit.style.display = 'none';
+            }
+        });
+
+        btnExcluirKit.addEventListener('click', () => {
+            const nomeKit = selectPastaKit.value;
+            const regiao = inputRegiaoHidden ? inputRegiaoHidden.value : '';
+
+            if (!nomeKit) return; // Segurança caso o select não tenha valor real
+
+            exibirConfirmacao(`Tem certeza que deseja EXCLUIR o kit "${nomeKit}" e TODOS os seus arquivos? Esta ação não pode ser desfeita.`, () => {
+                const formDataExcluirKit = new FormData();
+                formDataExcluirKit.append('nome_pasta', nomeKit);
+                formDataExcluirKit.append('regiao', regiao);
+
+                const textoOriginalE = btnExcluirKit.innerHTML;
+                btnExcluirKit.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btnExcluirKit.disabled = true;
+
+                fetch('php/actions/excluir_pasta_kit.php', {
+                    method: 'POST',
+                    body: formDataExcluirKit
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        exibirSucesso(data.mensagem);
+                        // Remove do dropdown
+                        Array.from(selectPastaKit.options).forEach(opt => {
+                            if (opt.value === nomeKit) {
+                                opt.remove();
+                            }
+                        });
+                        // Oculta botao
+                        btnExcluirKit.style.display = 'none';
+                        selectPastaKit.value = '';
+                    } else {
+                        exibirErro('Erro: ' + data.mensagem);
+                    }
+                })
+                .catch(err => {
+                    console.error('Erro ao excluir kit:', err);
+                    exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
+                })
+                .finally(() => {
+                    btnExcluirKit.innerHTML = textoOriginalE;
+                    btnExcluirKit.disabled = false;
+                });
+            });
+        });
     }
 });
 
-// Fecha Modais
-window.closeModal = function (modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
-};

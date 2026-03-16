@@ -1,30 +1,30 @@
 <?php
 header('Content-Type: application/json');
 
-// Resposta Padrão
 $response = array(
     'sucesso' => false,
     'mensagem' => ''
 );
 
-// Verifica se há envio
+// Lista de regiões permitidas — única fonte de verdade
+$regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mirassol', 'Aparecida Taboado'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Verifica o tipo de upload (normal ou kit)
     $tipo_upload = isset($_POST['tipo_upload']) ? $_POST['tipo_upload'] : 'normal';
+    $regiao = isset($_POST['regiao']) ? trim($_POST['regiao']) : '';
 
-    // Diretório base
-    $diretorio_base = '../documentos/';
-
-    // Define a pasta alvo com base no tipo
-    if ($tipo_upload === 'kit') {
-        $pasta_destino = $diretorio_base . 'upload_kit/';
-    }
-    else {
-        $pasta_destino = $diretorio_base . 'upload_normal/';
+    if (empty($regiao) || !in_array($regiao, $regioes_validas)) {
+        $response['mensagem'] = 'Região inválida ou não permitida.';
+        echo json_encode($response);
+        exit;
     }
 
-    // Tenta criar o diretório se ele não existir
+
+    $diretorio_base = '../documentos/pdfs/';
+
+    $pasta_destino = $diretorio_base . $regiao . '/' . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . '/';
+
     if (!is_dir($pasta_destino)) {
         if (!mkdir($pasta_destino, 0777, true)) {
             $response['mensagem'] = 'Falha ao criar o diretório destino.';
@@ -33,11 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Verifica se os arquivos foram enviados e não há erros críticos na estrutura
     if (isset($_FILES['arquivos']) && is_array($_FILES['arquivos']['name'])) {
         $totalArquivos = count($_FILES['arquivos']['name']);
         $arquivosSalvos = 0;
         $erros = [];
+
+        // Receber caminhos relativos para preservar estrutura de pastas (kits)
+        $caminhos = isset($_POST['caminhos']) ? $_POST['caminhos'] : [];
 
         for ($i = 0; $i < $totalArquivos; $i++) {
             $nomeOriginal = $_FILES['arquivos']['name'][$i];
@@ -46,34 +48,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tamanho = $_FILES['arquivos']['size'][$i];
             $tipo = $_FILES['arquivos']['type'][$i];
 
-            // Verifica se houve erro na transmissão
             if ($erro !== UPLOAD_ERR_OK) {
                 $erros[] = "Erro ao enviar o arquivo $nomeOriginal. Código: $erro.";
                 continue;
             }
 
-            // Checagem extra de segurança para PDF e tamanho
             $extensao = strtolower(pathinfo($nomeOriginal, PATHINFO_EXTENSION));
             if ($extensao !== 'pdf' && $tipo !== 'application/pdf') {
                 $erros[] = "O arquivo $nomeOriginal não é um PDF válido.";
                 continue;
             }
 
-            if ($tamanho > 5 * 1024 * 1024) { // 5MB
+            if ($tamanho > 5 * 1024 * 1024) {
                 $erros[] = "O arquivo $nomeOriginal excede 5MB.";
                 continue;
             }
 
-            // Gerar nome higienizado mantendo o formato original
-            $nomeSanitizado = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $nomeOriginal);
-            $caminhoCompleto = $pasta_destino . $nomeSanitizado;
+            // Determinar caminho de destino
+            $destino_final = $pasta_destino;
 
-            if (file_exists($caminhoCompleto)) {
-                $erros[] = "O arquivo $nomeOriginal já existe no servidor e foi pulado.";
-                continue;
+            if ($tipo_upload === 'kit' && isset($caminhos[$i]) && strpos($caminhos[$i], '/') !== false) {
+                // Extrair pasta do webkitRelativePath (ex: "NomePasta/arquivo.pdf")
+                $partes = explode('/', $caminhos[$i]);
+                // Remover o nome do arquivo (último elemento) e manter pasta(s)
+                array_pop($partes);
+                $subpasta = implode('/', $partes);
+
+                // Sanitizar
+                $subpasta = preg_replace('/[^a-zA-Z0-9_\-\/\s\.]/', '', $subpasta);
+
+                if (!empty($subpasta)) {
+                    $destino_final = $pasta_destino . $subpasta . '/';
+                    if (!is_dir($destino_final)) {
+                        mkdir($destino_final, 0777, true);
+                    }
+                }
             }
 
-            // Move da pasta temporária para o local final
+            $nomeSanitizado = $nomeOriginal;
+            $caminhoCompleto = $destino_final . $nomeSanitizado;
+
             if (move_uploaded_file($tmpName, $caminhoCompleto)) {
                 $arquivosSalvos++;
             }
@@ -84,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($arquivosSalvos > 0) {
             $response['sucesso'] = true;
-            $msgBase = "$arquivosSalvos arquivo(s) salvos em '" . ($tipo_upload === 'kit' ? 'upload_kit' : 'upload_normal') . "'.";
+            $msgBase = "$arquivosSalvos arquivo(s) salvos em '" . ($tipo_upload === 'kit' ? 'upload_kits' : 'upload_normal') . "'.";
             if (count($erros) > 0) {
                 $msgBase .= " Contudo, houve erros: " . implode(" ", $erros);
             }

@@ -6,7 +6,7 @@
     align-items: center;
     z-index: 3;
 
-    background: var(--corFundo2);
+    background: var(--corAzul);
     box-shadow: var(--sombra);
     padding: 10px 30px;
     border-bottom: 1px solid var(--corBordas);
@@ -14,23 +14,112 @@
 }
 
 .navbar-img img {
+    cursor: pointer;
     width: 75%;
 }
 
-#tema {
-    font-size: var(--text-2xl);
-    color: var(--corBordas);
+.navbar-items {
+    border-left: 1px solid var(--corBordas);
+    padding-left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#tema,
+.nav-btn {
+    font-size: var(--text-lg);
+    color: var(--txtClaro);
     background: none;
-    border-radius: 50%;
-    padding: 5px 6px;
+    border-radius: 8px;
+    padding: 8px 12px;
     cursor: pointer;
-    border: 1px solid var(--corBordas);
+    border: none;
     transition: all 0.3s ease;
     box-shadow: var(--sombra);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
 
     &:hover {
-        background: var(--corBordas);
-        color: var(--corFundo);
+        background: var(--txtClaro);
+        color: var(--corAzul);  
+    }
+}
+
+#tema {
+    border-radius: 50%;
+    padding: 7px;
+
+    &:hover {
         rotate: 360deg;
     }
+}
+
+.region-selector {
+    position: relative;
+}
+
+.region-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    left: auto;
+    background: var(--corAzul);
+    border: 1px solid var(--corBordas);
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    width: 200px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.region-dropdown.active {
+    display: flex;
+}
+
+.region-option {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: var(--txtClaro);
+    font-size: 14px;
+
+    &:hover {
+        background: var(--txtClaro);
+        color: var(--corAzul);
+    }
+}
+
+/* Badge de região travada — exibido na página de uploads */
+.region-locked-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(6px);
+    color: var(--txtClaro);
+    font-size: var(--text-md);
+    font-weight: 600;
+    cursor: default;
+    user-select: none;
+}
+
+.region-locked-badge.region-locked-warning {
+    background: rgba(229, 62, 62, 0.2);
+    border-color: rgba(229, 62, 62, 0.4);
+    color: #feb2b2;
+}
+
+/* Separador visual no dropdown de regiões */
+.region-separator {
+    height: 1px;
+    background: var(--corBordas);
+    margin: 4px 0;
 }

@@ -36,29 +36,55 @@ function changeTheme() {
 
 //Função para abrir Modals
 function showModal(qualModal) {
-    switch (qualModal) {
-        case 'gerTarefas':
-            document.getElementById(qualModal).style.display = "flex";
-            break;
-        case 'upTarefas':
-            document.getElementById(qualModal).style.display = "flex";
-            break;
-        default:
-            break;
+    const modal = document.getElementById(qualModal);
+    if (modal) {
+        modal.style.display = "flex";
     }
 }
 
 //Função para fechar Modals
 function closeModal(qualModal) {
-    switch (qualModal) {
-        case 'gerTarefas':
-            document.getElementById(qualModal).style.display = "none";
-            break;
-        case 'upTarefas':
-            document.getElementById(qualModal).style.display = "none";
-            break;
-        default:
-            break;
+    const modal = document.getElementById(qualModal);
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+// Funções para exibir mensagens de sucesso e erro
+function exibirSucesso(mensagem) {
+    const msgElement = document.getElementById('sucesso-msg');
+    if (msgElement) {
+        msgElement.innerText = mensagem;
+        showModal('sucesso');
+    }
+}
+
+function exibirErro(mensagem) {
+    const msgElement = document.getElementById('error-msg');
+    if (msgElement) {
+        msgElement.innerText = mensagem;
+        showModal('error');
+    }
+}
+
+// Função para exibir confirmação via Modal
+function exibirConfirmacao(mensagem, callback) {
+    const msgElem = document.getElementById('confirmacao-msg');
+    const btnSim = document.getElementById('confirmar-btn-sim');
+
+    if (msgElem && btnSim) {
+        msgElem.innerText = mensagem;
+        
+        // Remove listeners antigos para não acumular
+        const novoBtnSim = btnSim.cloneNode(true);
+        btnSim.parentNode.replaceChild(novoBtnSim, btnSim);
+        
+        novoBtnSim.addEventListener('click', () => {
+            closeModal('confirmacao');
+            if (typeof callback === 'function') callback();
+        });
+        
+        showModal('confirmacao');
     }
 }
 
@@ -76,51 +102,155 @@ function trocarUploadModal(tipo) {
     }
 }
 
-// Função para atualizar o contador de tarefas selecionadas
-function atualizarContagemTarefas() {
-    const container = document.querySelector("#gerTarefas");
-    if (container) {
-        const selecionadas = container.querySelectorAll('.tarefas tbody input[type="checkbox"]:checked').length;
-        const pQuantidade = container.querySelector(".modal-footer p");
-        if (pQuantidade) {
-            pQuantidade.textContent = selecionadas + (selecionadas === 1 ? " Tarefa selecionada." : " Tarefas selecionadas.");
+function trocarPagina(){
+    var urlAtual = new URL(window.location.href);
+    var regiaoAtual = urlAtual.searchParams.get('regiao');
+    var pageAtual = window.location.href;
+
+    if (pageAtual.includes('uploads.php')) {
+        // Voltando para a visualização: preserva a região
+        if (regiaoAtual) {
+            window.location.href = 'index.php?regiao=' + encodeURIComponent(regiaoAtual);
+        } else {
+            window.location.href = 'index.php';
+        }
+    } else {
+        // Indo para o upload: se há região, vai direto para ela
+        if (regiaoAtual) {
+            window.location.href = 'uploads.php?regiao=' + encodeURIComponent(regiaoAtual);
+        } else {
+            window.location.href = 'uploads.php';
         }
     }
 }
 
-// Event listener para atualizar a contagem toda vez que um checkbox for clicado na tabela
-document.addEventListener("change", function(e) {
-    if (e.target.matches('#gerTarefas .tarefas tbody input[type="checkbox"]')) {
-        atualizarContagemTarefas();
+// Lógica para a barra de pesquisa de PDFs e Pastas
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.querySelector('.listagem-pesquisa input');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const termo = this.value.toLowerCase().trim();
+            
+            // Seleciona todas as colunas de upload
+            const colunas = document.querySelectorAll('.upload-coluna-body');
+            
+            colunas.forEach(coluna => {
+                const filhos = coluna.children;
+                
+                for (let i = 0; i < filhos.length; i++) {
+                    const elem = filhos[i];
+                    
+                    // Se for um arquivo solto
+                    if (elem.classList.contains('arquivo-card') && !elem.classList.contains('pasta-card')) {
+                        const nomeElem = elem.querySelector('.arquivo-card-nome');
+                        if (nomeElem) {
+                            const nome = nomeElem.innerText.toLowerCase();
+                            if (nome.includes(termo)) {
+                                elem.style.display = 'flex';
+                            } else {
+                                elem.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    // Se for uma pasta
+                    if (elem.classList.contains('pasta-card')) {
+                        const pastaNomeElem = elem.querySelector('.arquivo-card-nome');
+                        const pastaNome = pastaNomeElem ? pastaNomeElem.innerText.toLowerCase() : '';
+                        const conteudo = elem.nextElementSibling; // div.pasta-conteudo
+                        let temFilhoCorrespondente = false;
+                        
+                        if (conteudo && conteudo.classList.contains('pasta-conteudo')) {
+                            const arquivosAninhados = conteudo.querySelectorAll('.arquivo-card');
+                            arquivosAninhados.forEach(arq => {
+                                const arqNomeElem = arq.querySelector('.arquivo-card-nome');
+                                if (arqNomeElem) {
+                                    const arqNome = arqNomeElem.innerText.toLowerCase();
+                                    if (arqNome.includes(termo)) {
+                                        arq.style.display = 'flex';
+                                        temFilhoCorrespondente = true;
+                                    } else {
+                                        arq.style.display = 'none';
+                                    }
+                                }
+                            });
+                        }
+                        
+                        // Mostra a pasta se o nome da pasta bater ou algum filho bater
+                        if (pastaNome.includes(termo) || temFilhoCorrespondente) {
+                            elem.style.display = 'flex';
+                            
+                            // Se estiver pesquisando, abre a pasta para ver o filho que encontrou
+                            if (termo !== '' && temFilhoCorrespondente) {
+                                conteudo.style.display = 'flex';
+                                const chevron = elem.querySelector('.pasta-chevron');
+                                if (chevron) chevron.classList.add('aberto');
+                            } else if (termo === '') {
+                                // Se limpou a pesquisa, fecha as pastas
+                                conteudo.style.display = 'none';
+                                const chevron = elem.querySelector('.pasta-chevron');
+                                if (chevron) chevron.classList.remove('aberto');
+                            }
+                        } else {
+                            elem.style.display = 'none';
+                            if (conteudo) conteudo.style.display = 'none';
+                        }
+                    }
+                }
+            });
+        });
     }
 });
 
-// Função chamada ao clicar em MARCAR COMO FEITO
-function checkTarefa() {
-    const container = document.querySelector("#gerTarefas");
-    const checkboxes = container.querySelectorAll('.tarefas tbody input[type="checkbox"]');
-    let alteradas = 0;
+function excluirItem(caminho) {
+    exibirConfirmacao("Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.", () => {
+        const formData = new FormData();
+        formData.append('caminho', caminho);
 
-    checkboxes.forEach(chk => {
-        if (chk.checked) {
-            const linha = chk.closest("tr");
-            const statusTd = linha.querySelectorAll("td")[2]; // 3ª coluna
-            
-            // Alterando o status visualmente
-            statusTd.textContent = "Concluída";
-            statusTd.className = "concluida";
-            statusTd.style.color = "#28a745"; // Cor verde
-            statusTd.style.fontWeight = "bold";
-            
-            // Desmarca o checkbox
-            chk.checked = false;
-            alteradas++;
-        }
+        fetch('php/actions/excluir_item.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.sucesso) {
+                exibirSucesso(data.mensagem);
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                exibirErro(data.mensagem);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            exibirErro("Erro ao excluir o item.");
+        });
     });
+}
 
-    if (alteradas > 0) {
-        atualizarContagemTarefas();
-    } else {
-        alert("Selecione pelo menos uma tarefa para marcar como feita.");
-    }
+function limparColuna(regiao, tipo) {
+    const nomeTipo = tipo === 'upload_normal' ? 'PDFs' : 'Kits';
+    exibirConfirmacao(`ATENÇÃO: Você está prestes a apagar TODOS os ${nomeTipo} da região ${regiao}.\nDeseja continuar?`, () => {
+        const formData = new FormData();
+        formData.append('regiao', regiao);
+        formData.append('tipo', tipo);
+
+        fetch('php/actions/limpar_coluna.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.sucesso) {
+                exibirSucesso(data.mensagem);
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                exibirErro(data.mensagem);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            exibirErro("Erro ao limpar a coluna.");
+        });
+    });
 }

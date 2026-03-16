@@ -10,6 +10,7 @@
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(3px);
+    overflow: auto;
 }
 
 .modal-box {
@@ -18,6 +19,7 @@
     border-radius: 10px;
     border: 1px solid var(--corBordas);
     width: 50%;
+    min-width: 350px;
     gap: 15px;
     padding: 25px;
     box-shadow: var(--sombra);
@@ -34,6 +36,10 @@
 
 .modal-header h2 {
     font-size: var(--text-lg);
+}
+
+#tipo_up {
+    color: var(--corBase);
 }
 
 .modal-header button {
@@ -142,6 +148,185 @@
     }
 }
 
+#btnEnviarArquivos {
+    background-color: #28a745;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+
+    &:hover {
+        background: #1c7230;
+    }
+}
+
+.div-btn {
+    width: 100%;
+}
+
+/* Estilos Novos para Gerenciar Tarefas */
+.modal-body-split {
+    display: flex;
+    gap: 0;
+    margin-top: 15px;
+    border-top: 1px solid var(--corBordas);
+}
+
+.tarefas-coluna {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tarefas-coluna:first-child {
+    border-right: 2px solid var(--corBordas);
+    /* Divisor vertical vermelho */
+}
+
+.tarefas-coluna h3 {
+    text-align: center;
+    color: var(--corBase);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.tarefas-lista {
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.tarefas-lista table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tarefas-lista th {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--corTxt3);
+    text-align: left;
+    padding: 8px;
+    text-transform: uppercase;
+}
+
+.tarefas-lista td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--corBordas);
+    vertical-align: middle;
+}
+
+.tarefa-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tarefa-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--corBase);
+    cursor: pointer;
+}
+
+.tarefa-checkbox span {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--corTxt);
+}
+
+.tarefa-nome a {
+    color: var(--corTxt);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: block;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tarefa-nome a:hover {
+    text-decoration: underline;
+    color: var(--corBase);
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.status-badge.pendente {
+    background-color: #ffe3e3;
+    color: var(--corBase);
+}
+
+.status-badge.concluido {
+    background-color: #e7f5ff;
+    color: #339af0;
+}
+
+.modal-footer-custom {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--corBordas);
+    background-color: var(--corFundo);
+    border-radius: 0 0 10px 10px;
+}
+
+.modal-footer-custom p {
+    color: var(--corTxt);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.modal-footer-custom p span {
+    color: var(--corBase);
+    font-weight: 800;
+}
+
+.btn-concluir-lote {
+    background-color: var(--corBase);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
+    transition: 0.2s all linear;
+}
+
+.btn-concluir-lote:hover {
+    background-color: var(--corDestaque);
+    transform: translateY(-2px);
+}
+
+.vazio {
+    text-align: center;
+    padding: 20px;
+    color: var(--corTxt3);
+    font-style: italic;
+}
+
 .upload-label {
     width: 100%;
     border: 1px dashed rgba(255, 0, 0, 0.5);
@@ -234,6 +419,67 @@
     border: 1px solid var(--corBordas);
 }
 
+.area-selecao-kit {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.area-selecao-kit label {
+    color: var(--corTxt3);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.agrupamento-select-kit {
+    display: flex;
+    gap: 10px;
+}
+
+.select-kit {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--corBordas);
+    background: var(--corFundo);
+    color: var(--corTxt3);
+    outline: none;
+    cursor: pointer;
+}
+
+.select-kit:focus {
+    border-color: var(--corBase);
+}
+
+.btn-criar-kit,
+.btn-excluir-kit {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    border: 1px solid var(--corBordas);
+    background: var(--corBase);
+    color: var(--txtClaro);
+
+    &:hover {
+        background: var(--corDestaque);
+    }
+}
+
+.btn-criar-kit {
+    background: var(--corAzul);
+
+    &:hover {
+        background: var(--txtClaro);
+        color: var(--corAzul);
+    }
+}
+
 .enviados-section {
     width: 100%;
     margin-top: 20px;
@@ -319,5 +565,114 @@
 
     &:hover {
         color: var(--corBase);
+    }
+}
+
+#sucesso,
+#error {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.0);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    padding: 20;
+    /* sem área extra */
+    z-index: 9999;
+
+    pointer-events: none;
+    /* não bloqueia cliques atrás */
+
+    animation: toastIn 0.45s cubic-bezier(.22, .61, .36, 1),
+        toastOut 0.4s ease-in-out 0.4s forwards;
+    backdrop-filter: none;
+}
+
+/* ENTRADA */
+@keyframes toastIn {
+    from {
+        transform: translateY(-15px) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* SAÍDA */
+@keyframes toastOut {
+    to {
+        transform: translateY(-10px) scale(0.96);
+        opacity: 0;
+        display: none;
+    }
+}
+
+#sucesso-box {
+    width: 320px;
+    background: oklch(76.864% 0.16957 161.631 / 0.75);
+    border: 1px solid oklch(76.5% 0.177 163.223);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    pointer-events: auto;
+    /* botão clicável */
+}
+
+#sucesso-txt {
+    color: oklch(96.782% 0.03253 170.226);
+}
+
+#error-box {
+    width: 320px;
+    background: oklch(54.626% 0.22417 29.223 / 0.75);
+    border: 1px solid oklch(54.626% 0.22417 29.223);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    pointer-events: auto;
+    /* botão clicável */
+}
+
+#error-txt {
+    color: oklch(92.96% 0.03092 17.535);
+}
+
+@media (max-width: 768px) {
+    .modal-body-split {
+        flex-direction: column;
+        flex-wrap: wrap;
+        overflow: auto;
+    }
+
+    .tarefas-coluna:first-child {
+        border: none;
+    }
+}
+
+@media (max-width: 1080px) {
+    .modal-body-split {
+        flex-direction: column;
+        flex-wrap: wrap;
+        overflow: auto;
+    }
+
+    .tarefas-coluna:first-child {
+        border: none;
     }
 }
