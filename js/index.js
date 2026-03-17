@@ -74,16 +74,16 @@ function exibirConfirmacao(mensagem, callback) {
 
     if (msgElem && btnSim) {
         msgElem.innerText = mensagem;
-        
+
         // Remove listeners antigos para não acumular
         const novoBtnSim = btnSim.cloneNode(true);
         btnSim.parentNode.replaceChild(novoBtnSim, btnSim);
-        
+
         novoBtnSim.addEventListener('click', () => {
             closeModal('confirmacao');
             if (typeof callback === 'function') callback();
         });
-        
+
         showModal('confirmacao');
     }
 }
@@ -102,45 +102,23 @@ function trocarUploadModal(tipo) {
     }
 }
 
-function trocarPagina(){
-    var urlAtual = new URL(window.location.href);
-    var regiaoAtual = urlAtual.searchParams.get('regiao');
-    var pageAtual = window.location.href;
-
-    if (pageAtual.includes('uploads.php')) {
-        // Voltando para a visualização: preserva a região
-        if (regiaoAtual) {
-            window.location.href = 'index.php?regiao=' + encodeURIComponent(regiaoAtual);
-        } else {
-            window.location.href = 'index.php';
-        }
-    } else {
-        // Indo para o upload: se há região, vai direto para ela
-        if (regiaoAtual) {
-            window.location.href = 'uploads.php?regiao=' + encodeURIComponent(regiaoAtual);
-        } else {
-            window.location.href = 'uploads.php';
-        }
-    }
-}
-
 // Lógica para a barra de pesquisa de PDFs e Pastas
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.querySelector('.listagem-pesquisa input');
-    
+
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
+        searchInput.addEventListener('input', function () {
             const termo = this.value.toLowerCase().trim();
-            
+
             // Seleciona todas as colunas de upload
             const colunas = document.querySelectorAll('.upload-coluna-body');
-            
+
             colunas.forEach(coluna => {
                 const filhos = coluna.children;
-                
+
                 for (let i = 0; i < filhos.length; i++) {
                     const elem = filhos[i];
-                    
+
                     // Se for um arquivo solto
                     if (elem.classList.contains('arquivo-card') && !elem.classList.contains('pasta-card')) {
                         const nomeElem = elem.querySelector('.arquivo-card-nome');
@@ -153,14 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
-                    
+
                     // Se for uma pasta
                     if (elem.classList.contains('pasta-card')) {
                         const pastaNomeElem = elem.querySelector('.arquivo-card-nome');
                         const pastaNome = pastaNomeElem ? pastaNomeElem.innerText.toLowerCase() : '';
                         const conteudo = elem.nextElementSibling; // div.pasta-conteudo
                         let temFilhoCorrespondente = false;
-                        
+
                         if (conteudo && conteudo.classList.contains('pasta-conteudo')) {
                             const arquivosAninhados = conteudo.querySelectorAll('.arquivo-card');
                             arquivosAninhados.forEach(arq => {
@@ -176,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
                             });
                         }
-                        
+
                         // Mostra a pasta se o nome da pasta bater ou algum filho bater
                         if (pastaNome.includes(termo) || temFilhoCorrespondente) {
                             elem.style.display = 'flex';
-                            
+
                             // Se estiver pesquisando, abre a pasta para ver o filho que encontrou
                             if (termo !== '' && temFilhoCorrespondente) {
                                 conteudo.style.display = 'flex';
@@ -212,19 +190,19 @@ function excluirItem(caminho) {
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.sucesso) {
-                exibirSucesso(data.mensagem);
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                exibirErro(data.mensagem);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            exibirErro("Erro ao excluir o item.");
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    exibirSucesso(data.mensagem);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    exibirErro(data.mensagem);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                exibirErro("Erro ao excluir o item.");
+            });
     });
 }
 
@@ -239,18 +217,18 @@ function limparColuna(regiao, tipo) {
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.sucesso) {
-                exibirSucesso(data.mensagem);
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                exibirErro(data.mensagem);
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            exibirErro("Erro ao limpar a coluna.");
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.sucesso) {
+                    exibirSucesso(data.mensagem);
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    exibirErro(data.mensagem);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                exibirErro("Erro ao limpar a coluna.");
+            });
     });
 }

@@ -6,7 +6,6 @@ $response = array(
     'mensagem' => ''
 );
 
-// Lista de regiões permitidas — única fonte de verdade
 $regioes_validas = ['Votuporanga', 'Rio Preto 1', 'Rio Preto 2', 'Roseira', 'Mirassol', 'Aparecida Taboado'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -38,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $arquivosSalvos = 0;
         $erros = [];
 
-        // Receber caminhos relativos para preservar estrutura de pastas (kits)
         $caminhos = isset($_POST['caminhos']) ? $_POST['caminhos'] : [];
 
         for ($i = 0; $i < $totalArquivos; $i++) {
@@ -64,17 +62,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 continue;
             }
 
-            // Determinar caminho de destino
             $destino_final = $pasta_destino;
 
             if ($tipo_upload === 'kit' && isset($caminhos[$i]) && strpos($caminhos[$i], '/') !== false) {
-                // Extrair pasta do webkitRelativePath (ex: "NomePasta/arquivo.pdf")
+
                 $partes = explode('/', $caminhos[$i]);
-                // Remover o nome do arquivo (último elemento) e manter pasta(s)
+
                 array_pop($partes);
                 $subpasta = implode('/', $partes);
 
-                // Sanitizar
                 $subpasta = preg_replace('/[^a-zA-Z0-9_\-\/\s\.]/', '', $subpasta);
 
                 if (!empty($subpasta)) {

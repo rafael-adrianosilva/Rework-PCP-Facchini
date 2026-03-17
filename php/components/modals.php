@@ -15,24 +15,16 @@ $regiao = isset($_GET['regiao']) ? trim($_GET['regiao']) : '';
 $total_tarefas = 0;
 $tarefas_selecionadas = 0;
 
-$config_diretorios = [
-    'Normal' => [
-        'titulo' => 'UPLOAD NORMAL',
-        'pasta' => 'upload_normal',
-        'cor' => 'var(--corBase)'
-    ],
-    'Kit' => [
-        'titulo' => 'UPLOAD KIT',
-        'pasta' => 'upload_kits',
-        'cor' => 'var(--corBase)'
-    ]
-];
+$tipos_diretorios = ['Normal', 'Kit'];
 
 if (!empty($regiao)) {
     $base_pcp = dirname(__DIR__, 2);
 
-    foreach ($config_diretorios as $tipo => $config) {
-        $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/" . $config['pasta'];
+    foreach ($tipos_diretorios as $tipo) {
+        $titulo = ($tipo === 'Normal') ? 'UPLOAD NORMAL' : 'UPLOAD KIT';
+        $pasta = ($tipo === 'Normal') ? 'upload_normal' : 'upload_kits';
+        
+        $caminho = $base_pcp . "/documentos/pdfs/{$regiao}/" . $pasta;
 
         // Fallback para 'upload_kit' no singular
         if ($tipo === 'Kit' && !is_dir($caminho)) {
@@ -40,7 +32,7 @@ if (!empty($regiao)) {
         }
 
         echo '<div class="tarefas-coluna">';
-        echo '<h3>' . $config['titulo'] . '</h3>';
+        echo '<h3>' . $titulo . '</h3>';
         echo '<div class="tarefas-grid">';
 
         $tarefas_na_coluna = 0;
@@ -53,29 +45,28 @@ if (!empty($regiao)) {
                     $caminho_item = $caminho . '/' . $arquivo;
                     $is_dir = is_dir($caminho_item);
                     $caminho_relativo = "documentos/pdfs/{$regiao}/" . ($tipo === 'Kit' ? (strpos($caminho, 'upload_kits') !== false ? 'upload_kits' : 'upload_kit') : 'upload_normal') . "/{$arquivo}";
-?>
-                                    <div class="tarefa-card">
-                                        <div class="tarefa-info">
-                                            <div class="tarefa-checkbox">
-                                                <input type="checkbox" name="tarefas[]" value="<?php echo htmlspecialchars($arquivo); ?>" onchange="updateCounter()">
-                                            </div>
-                                            <div class="tarefa-icon">
-                                                <i class="fas <?php echo $is_dir ? 'fa-folder' : 'fa-file-pdf'; ?>"></i>
-                                            </div>
-                                            <div class="tarefa-detalhes">
-                                                <a href="<?php echo $caminho_relativo; ?>" class="tarefa-nome" <?php echo $is_dir ? '' : 'download="' . htmlspecialchars($arquivo) . '"'; ?>>
-                                                    <?php echo htmlspecialchars($arquivo); ?>
-                                                </a>
-                                                <div class="tarefa-meta">
-                                                    <span>#<?php echo $tarefas_na_coluna; ?></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="tarefa-acoes">
-                                            <span class="status-badge pendente">PENDENTE</span>
-                                        </div>
-                                    </div>
-                                    <?php
+
+                    echo '                    <div class="tarefa-card">';
+                    echo '                        <div class="tarefa-info">';
+                    echo '                            <div class="tarefa-checkbox">';
+                    echo '                                <input type="checkbox" name="tarefas[]" value="' . htmlspecialchars($arquivo) . '" onchange="updateCounter()">';
+                    echo '                            </div>';
+                    echo '                            <div class="tarefa-icon">';
+                    echo '                                <i class="fas ' . ($is_dir ? 'fa-folder' : 'fa-file-pdf') . '"></i>';
+                    echo '                            </div>';
+                    echo '                            <div class="tarefa-detalhes">';
+                    echo '                                <a href="' . $caminho_relativo . '" class="tarefa-nome" ' . ($is_dir ? '' : 'download="' . htmlspecialchars($arquivo) . '"') . '>';
+                    echo '                                    ' . htmlspecialchars($arquivo);
+                    echo '                                </a>';
+                    echo '                                <div class="tarefa-meta">';
+                    echo '                                    <span>#' . $tarefas_na_coluna . '</span>';
+                    echo '                                </div>';
+                    echo '                            </div>';
+                    echo '                        </div>';
+                    echo '                        <div class="tarefa-acoes">';
+                    echo '                            <span class="status-badge pendente">PENDENTE</span>';
+                    echo '                        </div>';
+                    echo '                    </div>';
                 }
             }
         }
