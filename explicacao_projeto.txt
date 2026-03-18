@@ -1,0 +1,42 @@
+================================================================================
+                    EXPLICAÇÃO GERAL DO PROJETO: FACCHINI PCP
+================================================================================
+
+1. OBJETIVO DO PROJETO
+O sistema Facchini PCP é uma plataforma web desenvolvida para o gerenciamento, 
+visualização e download de documentos de Planejamento e Controle da Produção 
+(PCP). Ele permite organizar arquivos PDF por regiões geográficas e categorias 
+(Arquivos Normais e Kits de PDFs).
+
+2. ESTRUTURA DE PASTAS PRINCIPAL
+- /css: Arquivos de estilização (Global, Home, Modais, Navegação).
+- /js: Lógica do lado do cliente (Index.js para interface e Upload.js para envios).
+- /php/components: Partes reutilizáveis da interface (Menu, Rodapé, Janelas Modais).
+- /php/actions: Scripts que executam ações (Excluir arquivo, Criar pasta, Limpar tudo).
+- /documentos/pdfs: Onde os arquivos enviados ficam armazenados, separados por 
+  região (ex: Votuporanga, Mirassol).
+
+3. FUNCIONAMENTO DO SISTEMA
+O sistema funciona em duas frentes:
+A. VISUALIZAÇÃO (index.php): Onde o usuário seleciona uma região e pode ver 
+   os PDFs disponíveis para baixar. Possui uma barra de pesquisa rápida.
+B. GERENCIAMENTO (uploads.php): Área administrativa onde é possível enviar 
+   novos arquivos, criar pastas (kits) e excluir documentos antigos.
+
+4. TECNOLOGIAS UTILIZADAS
+- PHP: Linguagem de backend para processamento de arquivos e lógica do servidor.
+- HTML5/CSS3: Estrutura e design moderno (temas claro/escuro, responsividade).
+- JavaScript (Vanilla): Interatividade, buscas dinâmicas e uploads via AJAX (sem 
+  recarregar a página).
+- Armazenamento em Sistema de Arquivos: Os PDFs são salvos diretamente no disco, 
+  organizados em pastas, facilitando o acesso e backup.
+
+5. REGRAS DE NEGÓCIO
+- Apenas arquivos PDF são aceitos.
+- O tamanho máximo por arquivo é de 5MB.
+- Documentos são estritamente separados por região.
+- "Kits" permitem o envio de pastas inteiras, mantendo a estrutura original.
+
+================================================================================
+Desenvolvido para facilitar o fluxo de documentos industriais da Facchini.
+================================================================================

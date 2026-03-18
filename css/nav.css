@@ -14,7 +14,6 @@
 }
 
 .navbar-img img {
-    cursor: pointer;
     width: 75%;
 }
 
@@ -44,7 +43,7 @@
 
     &:hover {
         background: var(--txtClaro);
-        color: var(--corAzul);  
+        color: var(--corAzul);
     }
 }
 
