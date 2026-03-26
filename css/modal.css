@@ -588,8 +588,8 @@
     pointer-events: none;
     /* não bloqueia cliques atrás */
 
-    animation: toastIn 0.45s cubic-bezier(.22, .61, .36, 1),
-        toastOut 0.4s ease-in-out 0.4s forwards;
+    animation: toastIn 0.35s cubic-bezier(.22, .61, .36, 1),
+        toastOut 2.4s ease-in-out 2.4s forwards;
     backdrop-filter: none;
 }
 
@@ -611,7 +611,6 @@
     to {
         transform: translateY(-10px) scale(0.96);
         opacity: 0;
-        display: none;
     }
 }
 
