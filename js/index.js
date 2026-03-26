@@ -39,6 +39,13 @@ function showModal(qualModal) {
     const modal = document.getElementById(qualModal);
     if (modal) {
         modal.style.display = "flex";
+        
+        // Se for sucesso ou erro (toasts), resetamos a animação para que o navegador a execute novamente
+        if (qualModal === 'sucesso' || qualModal === 'error') {
+            modal.style.animation = 'none';
+            modal.offsetHeight; // Força o reflow para resetar a animação
+            modal.style.animation = '';
+        }
     }
 }
 

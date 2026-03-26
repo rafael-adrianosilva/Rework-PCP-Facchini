@@ -419,32 +419,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 body: formDataKit
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.sucesso) {
-                    closeModal('criarKitModal');
-                    const selectPastaKit = document.getElementById('selectPastaKit');
-                    if (selectPastaKit) {
-                        const option = document.createElement('option');
-                        option.value = data.nome_pasta;
-                        option.textContent = data.nome_pasta;
-                        selectPastaKit.appendChild(option);
-                        selectPastaKit.value = data.nome_pasta; // já seleciona o criado
+                .then(res => res.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        closeModal('criarKitModal');
+                        const selectPastaKit = document.getElementById('selectPastaKit');
+                        if (selectPastaKit) {
+                            const option = document.createElement('option');
+                            option.value = data.nome_pasta;
+                            option.textContent = data.nome_pasta;
+                            selectPastaKit.appendChild(option);
+                            selectPastaKit.value = data.nome_pasta; // já seleciona o criado
+                        }
+                        if (nomeKitElem) nomeKitElem.value = '';
+                        exibirSucesso(data.mensagem);
+                    } else {
+                        exibirErro('Erro: ' + data.mensagem);
                     }
-                    if (nomeKitElem) nomeKitElem.value = '';
-                    exibirSucesso(data.mensagem);
-                } else {
-                    exibirErro('Erro: ' + data.mensagem);
-                }
-            })
-            .catch(err => {
-                console.error('Erro ao criar kit:', err);
-                exibirErro('Ocorreu um erro ao criar o Kit.');
-            })
-            .finally(() => {
-                btnSalvarNovoKit.innerHTML = textoOriginal;
-                btnSalvarNovoKit.disabled = false;
-            });
+                })
+                .catch(err => {
+                    console.error('Erro ao criar kit:', err);
+                    exibirErro('Ocorreu um erro ao criar o Kit.');
+                })
+                .finally(() => {
+                    btnSalvarNovoKit.innerHTML = textoOriginal;
+                    btnSalvarNovoKit.disabled = false;
+                });
         });
     }
 
@@ -480,31 +480,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     body: formDataExcluirKit
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        exibirSucesso(data.mensagem);
-                        // Remove do dropdown
-                        Array.from(selectPastaKit.options).forEach(opt => {
-                            if (opt.value === nomeKit) {
-                                opt.remove();
-                            }
-                        });
-                        // Oculta botao
-                        btnExcluirKit.style.display = 'none';
-                        selectPastaKit.value = '';
-                    } else {
-                        exibirErro('Erro: ' + data.mensagem);
-                    }
-                })
-                .catch(err => {
-                    console.error('Erro ao excluir kit:', err);
-                    exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
-                })
-                .finally(() => {
-                    btnExcluirKit.innerHTML = textoOriginalE;
-                    btnExcluirKit.disabled = false;
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            exibirSucesso(data.mensagem);
+                            // Remove do dropdown
+                            Array.from(selectPastaKit.options).forEach(opt => {
+                                if (opt.value === nomeKit) {
+                                    opt.remove();
+                                }
+                            });
+                            // Oculta botao
+                            btnExcluirKit.style.display = 'none';
+                            selectPastaKit.value = '';
+                        } else {
+                            exibirErro('Erro: ' + data.mensagem);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Erro ao excluir kit:', err);
+                        exibirErro('Ocorreu um erro ao tentar excluir o Kit.');
+                    })
+                    .finally(() => {
+                        btnExcluirKit.innerHTML = textoOriginalE;
+                        btnExcluirKit.disabled = false;
+                    });
             });
         });
     }
